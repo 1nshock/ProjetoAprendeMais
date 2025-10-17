@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salas de Aula - Gerenciamento</title>
+    <link rel="stylesheet" href="css/salas.css">
+</head>
+<body>
+
+    <header class="page-header">
+    <a href="menudeensino.html" class="header-title-link">Salas de Aula</a>
+</header>
+
+    <main class="main-container">
+        <div class="management-area">
+            
+            <div id="room-list-view" class="room-content-container">
+                <div class="room-list-header">
+                    <div class="room-list-title"></div>
+                    <button id="create-top-btn" class="sidebar-btn primary-action small">Criar Sala <span class="icon">+</span></button>
+                </div>
+                <div id="room-list-scroller"></div>
+            </div>
+
+            <div id="create-edit-form" class="room-content-container form-modal hidden">
+                </div>
+
+            <div class="sidebar-actions">
+                <button id="create-mode-btn" class="sidebar-btn primary-action">
+                    Criar Salas <span class="icon">+</span>
+                </button>
+                <button id="edit-mode-btn" class="sidebar-btn secondary-action">
+                    Editar Salas <span class="icon">📝</span>
+                </button>
+                <button id="delete-mode-btn" class="sidebar-btn danger-action">
+                    Apagar Salas <span class="icon">X</span>
+                </button>
+            </div>
+            
+            <div class="sidebar-actions hidden" id="cancel-action-btn-container">
+                <button id="cancel-action-btn" class="sidebar-btn danger-action full-width">
+                    CANCELAR
+                </button>
+            </div>
+        </div>
+        
+    </main>
+
+    <script src="salas.js"></script>
+</body>
+</html>

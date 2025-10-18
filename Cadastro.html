@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cadastro Educacional</title>
+    <link rel="stylesheet" href="stylesheet/style.css">
+</head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #000000, #2f2e30);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 25px;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    color: #1f1e1e;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #fd4800;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn {
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    text-align: center;
+}
+
+.btn:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-professor {
+    background: orangered
+}
+
+.btn-instituicao {
+    background: orangered
+}
+
+.btn-aluno {
+    background: orangered
+}
+
+.form-container {
+    display: none;
+}
+
+.form-container.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #f83e05;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.btn-back {
+    background: #e0e0e0;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.btn-back:hover {
+    background: #d0d0d0;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #ff8800 0%, #da3c0c 100%);
+    width: 100%;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 30px 20px;
+    }
+}
+</style>
+
+<body>
+    <div class="container">
+        <div id="menu" class="menu-container">
+            <h1>Formulário Cadastro</h1>
+            <p class="subtitle">Escolha o tipo de cadastro</p>
+
+            <div class="menu-buttons">
+                <button class="btn btn-professor" onclick="showForm('professor')">
+                    Cadastro de Professor
+                </button>
+                <button class="btn btn-instituicao" onclick="showForm('instituicao')">
+                    Cadastro de Instituição
+                </button>
+                <button class="btn btn-aluno" onclick="showForm('aluno')">
+                    Cadastro de Aluno
+                </button>
+            </div>
+        </div>
+
+
+        <div id="form-professor" class="form-container">
+            <button class="btn btn-back" onclick="showMenu()">Voltar</button>
+            <h1>Cadastro de Professor</h1>
+            <p class="subtitle">Preencha seus dados</p>
+
+            <form action="/cadastro/professor" method="POST" onsubmit="handleSubmit(event, 'Professor')">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" name="nome" required placeholder="Digite seu nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label>CPF</label>
+                    <input type="text" name="cpf" required placeholder="000.000.000-00" maxlength="14">
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" name="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Instituição</label>
+                    <input type="text" name="instituicao" required placeholder="Nome da instituição">
+                </div>
+
+                <div class="form-group">
+                    <label>Código do Docente</label>
+                    <input type="text" name="codigo_docente" required placeholder="Digite o código">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required placeholder="Digite a senha provisória">
+                </div>
+
+                <button type="submit" class="btn btn-submit">Cadastrar Professor</button>
+            </form>
+        </div>
+
+
+        <div id="form-instituicao" class="form-container">
+            <button class="btn btn-back" onclick="showMenu()">Voltar</button>
+            <h1>Cadastro de Instituição</h1>
+            <p class="subtitle">Preencha os dados da instituição</p>
+
+            <form action="/cadastro/instituicao" method="POST" onsubmit="handleSubmit(event, 'Instituição')">
+                <div class="form-group">
+                    <label>Nome da Unidade</label>
+                    <input type="text" name="nome_unidade" required placeholder="Nome da instituição">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" name="codigo" required placeholder="Código">
+                    </div>
+
+                    <div class="form-group">
+                        <label>CNPJ</label>
+                        <input type="text" name="cnpj" required placeholder="00.000.000/0000-00" maxlength="18">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select name="tipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="estadual">Estadual</option>
+                        <option value="privada">Privada</option>
+                        <option value="federal">Federal</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CEP</label>
+                        <input type="text" name="cep" required placeholder="00000-000" maxlength="9">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Número</label>
+                        <input type="text" name="numero" required placeholder="Nº">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel" name="telefone" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail de Contato</label>
+                    <input type="email" name="email_contato" required placeholder="contato@instituicao.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required placeholder="Digite a senha provisória">
+                </div>
+
+                <button type="submit" class="btn btn-submit">Cadastrar Instituição</button>
+            </form>
+        </div>
+
+
+        <div id="form-aluno" class="form-container">
+            <button class="btn btn-back" onclick="showMenu()">Voltar</button>
+            <h1>Cadastro de Aluno</h1>
+            <p class="subtitle">Preencha seus dados</p>
+
+            <form action="/cadastro/aluno" method="post" onsubmit="handleSubmit(event, 'Aluno')">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" name="nome" required placeholder="Digite o nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label>RA (Registro Acadêmico)</label>
+                    <input type="text" name="ra" required placeholder="Digite o RA">
+                </div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="text" name="email" required placeholder="Digite o E-mail">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required placeholder="Digite a senha provisória">
+                </div>
+
+                <button type="submit" class="btn btn-submit">Cadastrar Aluno</button>
+            </form>
+        </div>
+    </div>
+</body>
+    <script>
+        function showForm(type) {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('form-' + type).classList.add('active');
+        }
+
+        function showMenu() {
+            document.getElementById('menu').classList.remove('hidden');
+
+            const forms = document.querySelectorAll('.form-container');
+            forms.forEach(form => {
+                form.classList.remove('active');
+            });
+        }
+
+        function handleSubmit(event, type) {
+            event.preventDefault();
+            alert('Cadastro de ' + type + ' realizado com sucesso!');
+            showMenu();
+            event.target.reset();
+        }
+
+        document.addEventListener('input', function (e) {
+            if (e.target.placeholder === '000.000.000-00') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            }
+
+            if (e.target.placeholder === '00.000.000/0000-00') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1/$2');
+                value = value.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            }
+
+            if (e.target.placeholder === '00000-000') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value;
+            }
+
+            if (e.target.type === 'tel') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+    </script>
+</body>
+
+</html>

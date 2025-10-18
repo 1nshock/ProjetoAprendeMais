@@ -1,0 +1,189 @@
+/* REGRAS DE LIMPEZA PARA RESOLVER O ESPAÇO ABAIXO */
+html {
+    margin: 0;
+    padding: 0;
+    /* Adiciona a altura mínima aqui se a remoção total não funcionou */
+    min-height: 100%; 
+}
+/* FIM DAS REGRAS DE LIMPEZA */
+
+:root{
+--dark-bg: #000000;
+--card-bg-orange: #ff4500;
+--navbar-text: #ffffff;
+--active-link: #ff4500;
+--glow-color-1: #ff8c00;
+--glow-color-2: #e4cd00;
+--padding-sides: 5%;
+}
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body{
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: #000;
+color: #fff;
+position: relative;
+/* REMOÇÃO DE MIN-HEIGHT: 100VH PARA RESOLVER O ESPAÇO EXTRA */
+overflow-x: hidden;
+/* GARANTE QUE O BODY NÃO TENHA MARGEM OU PADDING INVISÍVEL */
+margin: 0; 
+padding: 0;
+}
+body::before,
+body::after{
+content: '';
+position: fixed;
+width: 400px;
+height: 800px;
+border-radius: 50%;
+filter: blur(250px);
+opacity: 1;
+z-index: -1;
+pointer-events: none;
+transition: all 0.3s ease;
+}
+body::before{
+top: -150px;
+left: -250px;
+background: radial-gradient(circle, #ff3c00, transparent 70%);
+}
+body::after{
+bottom: -150px;
+right: -200px;
+background: radial-gradient(circle, #ff6b00, transparent 70%);
+}
+a{
+text-decoration: none;
+color: inherit;
+}
+.topbar{
+position: fixed;
+top: 0;
+width: 100%;
+height: 70px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 40px;
+background: rgba(0, 0, 0, 0.7);
+backdrop-filter: blur(10px);
+z-index: 1000;
+}
+/* AJUSTES PARA LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+}
+.logo img{
+height: 60px;
+}
+/* REMOVE ESTILO DO TÍTULO DA NAV QUE NÃO É MAIS NECESSÁRIO */
+.page-title {
+    display: none; 
+}
+/* CORREÇÃO AQUI */
+.navbar{
+display: flex;
+gap: 30px;
+margin-left: auto; 
+margin-right: auto;
+}
+.nav-link{
+font-size: 16px;
+padding: 5px 0;
+color: #ddd;
+position: relative;
+}
+.nav-link.active,
+.nav-link:hover{
+color: #ff3c00;
+}
+.nav-link.active::after,
+.nav-link:hover::after{
+content: '';
+position: absolute;
+bottom: -4px;
+left: 0;
+width: 100%;
+height: 2px;
+background: #ff3c00;
+}
+.login-button a{
+background: linear-gradient(to right, #ff3c00, #ff6b00);
+color: #fff;
+padding: 10px 20px;
+border-radius: 6px;
+font-weight: bold;
+}
+/* AUMENTA O ESPAÇO SUPERIOR PARA MOVER O CONTEÚDO PARA BAIXO */
+.content{
+/* MUDANÇA AQUI: O valor de 40px no padding inferior está sendo removido. */
+/* O formato é: padding-top | padding-right | padding-bottom | padding-left */
+padding: 120px var(--padding-sides) 0 var(--padding-sides); 
+}
+.section-title{
+font-family: Tahoma;
+font-size: 2.5rem;
+margin-bottom: 40px;
+font-weight: 800;
+}
+.cards-container{
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 30px;
+width: 100%;
+margin-bottom: 20px;
+}
+.card{
+height: 350px; 
+background-color: #0c0c0c; 
+border-radius: 5px; 
+overflow: hidden;
+position: relative;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+cursor: pointer;
+}
+.card-content-area{
+height: calc(100% - 60px);
+position: relative;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+.card-content-area::before{
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
+radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+filter: blur(60px); 
+opacity: 1; 
+}
+.card-footer{
+height: 60px;
+background-color: var(--card-bg-orange);
+color: var(--navbar-text);
+display: flex;
+align-items: center;
+padding-left: 20px;
+font-weight: bold;
+font-size: 18px;
+text-decoration: none; 
+}
+@media (max-width: 900px){
+.cards-container{
+grid-template-columns: repeat(2, 1fr);
+}
+}
+@media (max-width: 600px){
+.cards-container{
+grid-template-columns: 1fr;
+}
+}
+

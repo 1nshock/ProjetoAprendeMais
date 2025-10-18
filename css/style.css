@@ -61,8 +61,12 @@ a {
   z-index: 1000;
 }
 
-.logo img {
-  height: 40px;
+.logo {
+  height: 120px;
+  width: 100px;
+}
+.logonav{
+  height: 120px;
 }
 
 .navbar {
@@ -150,7 +154,7 @@ a {
 }
 
 .hero-image img {
-  max-width: 250px;
+  max-width: 700px;
   height: auto;
 }
 

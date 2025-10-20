@@ -78,7 +78,8 @@ z-index: 1000;
     align-items: center;
 }
 .logo img{
-height: 60px;
+height: 120px;
+width: 100px;
 }
 /* REMOVE ESTILO DO TÍTULO DA NAV QUE NÃO É MAIS NECESSÁRIO */
 .page-title {

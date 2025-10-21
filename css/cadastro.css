@@ -59,15 +59,18 @@
     }
 
     .btn-professor {
-        background: orangered
+        background: linear-gradient(to right, #ff3c00, #ff6b00);
+  border: none;
     }
 
     .btn-instituicao {
-        background: orangered
+        background: linear-gradient(to right, #ff3c00, #ff6b00);
+  border: none;
     }
 
     .btn-aluno {
-        background: orangered
+       background: linear-gradient(to right, #ff3c00, #ff6b00);
+  border: none;
     }
 
     .form-container {

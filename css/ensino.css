@@ -1,11 +1,9 @@
-/* REGRAS DE LIMPEZA PARA RESOLVER O ESPAÇO ABAIXO */
+
 html {
     margin: 0;
     padding: 0;
-    /* Adiciona a altura mínima aqui se a remoção total não funcionou */
     min-height: 100%; 
 }
-/* FIM DAS REGRAS DE LIMPEZA */
 
 :root{
 --dark-bg: #000000;
@@ -26,7 +24,7 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 background-color: #000;
 color: #fff;
 position: relative;
-/* REMOÇÃO DE MIN-HEIGHT: 100VH PARA RESOLVER O ESPAÇO EXTRA */
+
 overflow-x: hidden;
 /* GARANTE QUE O BODY NÃO TENHA MARGEM OU PADDING INVISÍVEL */
 margin: 0; 

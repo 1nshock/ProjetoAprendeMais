@@ -167,17 +167,15 @@ function openFormModal(mode, room = null) {
     
     document.getElementById('room-crud-form').addEventListener('submit', handleFormSubmit);
     
-    // ***********************************************
-    // NOVA LÓGICA DE TOGGLE DE SENHA
-    // ***********************************************
+
     const toggleBtn = document.getElementById('toggle-password-btn');
     const pwdInput = document.getElementById('room-password');
 
     if (toggleBtn && pwdInput) {
-        // SVG para os ícones de olho (simplificado, use seus próprios SVGs ou fontes de ícones)
+       
         const eyeSvg = {
-            open: '👁️', // Substitua por seu SVG/ícone de olho aberto
-            closed: '🔒' // Substitua por seu SVG/ícone de olho fechado (ou com corte)
+            open: '👁️', 
+            closed: '🔒' 
         };
 
         // Estado inicial

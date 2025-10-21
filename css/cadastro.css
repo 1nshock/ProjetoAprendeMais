@@ -5,12 +5,40 @@
     }
 
     body {
-        background: linear-gradient(135deg, #000000, #2f2e30);
+        background-color: #000;
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
         padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+        content: '';
+        position: fixed;
+        width: 400px;
+        height: 800px;
+        border-radius: 50%;
+        filter: blur(250px);
+        opacity: 1;
+        z-index: -1;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    body::before {
+        top: -150px;
+        left: -250px;
+        background: radial-gradient(circle, #ff3c00, transparent 70%);
+    }
+
+    body::after {
+        bottom: -150px;
+        right: -200px;
+        background: radial-gradient(circle, #ff6b00, transparent 70%);
     }
 
     
@@ -69,8 +97,7 @@
     }
 
     .btn-aluno {
-       background: linear-gradient(to right, #ff3c00, #ff6b00);
-  border: none;
+        background: orangered
     }
 
     .form-container {

@@ -147,6 +147,7 @@ box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 cursor: pointer;
 }
 .card-content-area{
+ 
 height: calc(100% - 60px);
 position: relative;
 display: flex;

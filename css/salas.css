@@ -89,20 +89,40 @@ body::after {
     display: none !important;
 }
 
-.page-header a {
+.voltar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    background: #f33708;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+ 
+
+.page-header {
+    margin-top: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.page-header h1 {
     font-size: 36px;
     margin-bottom: 30px;
     font-weight: bold;
-    
-    text-decoration: none; 
     color: inherit;
-    cursor: pointer;
-    display: inline-block;
-    transition: opacity 0.2s;
-}
-
-.page-header a:hover {
-    opacity: 0.8; 
+    text-align: left;
 }
 
 

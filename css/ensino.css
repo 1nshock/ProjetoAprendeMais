@@ -19,40 +19,9 @@ margin: 0;
 padding: 0;
 box-sizing: border-box;
 }
-body{
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background-color: #000;
-color: #fff;
-position: relative;
+/* body é controlado agora por style.css e suas variantes (light-theme / dark-theme) */
+/* removemos background-color, color e orbs daqui para que style.css tenha precedência */
 
-overflow-x: hidden;
-/* GARANTE QUE O BODY NÃO TENHA MARGEM OU PADDING INVISÍVEL */
-margin: 0; 
-padding: 0;
-}
-body::before,
-body::after{
-content: '';
-position: fixed;
-width: 400px;
-height: 800px;
-border-radius: 50%;
-filter: blur(250px);
-opacity: 1;
-z-index: -1;
-pointer-events: none;
-transition: all 0.3s ease;
-}
-body::before{
-top: -150px;
-left: -250px;
-background: radial-gradient(circle, #ff3c00, transparent 70%);
-}
-body::after{
-bottom: -150px;
-right: -200px;
-background: radial-gradient(circle, #ff6b00, transparent 70%);
-}
 a{
 text-decoration: none;
 color: inherit;
@@ -185,4 +154,87 @@ grid-template-columns: repeat(2, 1fr);
 grid-template-columns: 1fr;
 }
 }
+
+/* --- Tema claro (alternável) --- */
+body.light-theme {
+  background: linear-gradient(180deg, #fbfdff 0%, #f6f9fc 100%);
+  color: #111827;
+}
+
+body.light-theme::before {
+  background: radial-gradient(circle, rgba(255,122,58,0.10), transparent 70%);
+  opacity: 0.12;
+  filter: blur(140px);
+}
+
+body.light-theme::after {
+  background: radial-gradient(circle, rgba(255,163,77,0.08), transparent 70%);
+  opacity: 0.12;
+  filter: blur(140px);
+}
+
+body.light-theme .topbar {
+  background: rgba(255,255,255,0.8);
+}
+
+body.light-theme .nav-link {
+  color: #334155;
+}
+
+body.light-theme .card {
+  background-color: #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+body.light-theme .section-title {
+  color: #111827;
+}
+
+body.light-theme .card-content-area::before {
+  opacity: 0.4;
+}
+
+/* --- Tema escuro (padrão ou alternável) --- */
+body.dark-theme {
+  background: linear-gradient(180deg, #000000 0%, #0b0b0b 100%);
+  color: #fff;
+}
+
+body.dark-theme::before {
+  background: radial-gradient(circle, #ff3c00, transparent 70%);
+  opacity: 1;
+  filter: blur(250px);
+  width: 400px;
+  height: 800px;
+  top: -150px;
+  left: -250px;
+}
+
+body.dark-theme::after {
+  background: radial-gradient(circle, #ff6b00, transparent 70%);
+  opacity: 1;
+  filter: blur(250px);
+  width: 400px;
+  height: 800px;
+  bottom: -150px;
+  right: -200px;
+}
+
+body.dark-theme .topbar {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-theme .nav-link {
+  color: #ddd;
+}
+
+body.dark-theme .card {
+  background-color: #0c0c0c;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .section-title {
+  color: #fff;
+}
+
 

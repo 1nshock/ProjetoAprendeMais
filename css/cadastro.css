@@ -5,7 +5,8 @@
     }
 
     body {
-        background-color: #000;
+        background: linear-gradient(180deg, #fbfcfe 0%, #f3f7fb 100%);
+        color: #1f2937;
         min-height: 100vh;
         display: flex;
         justify-content: center;
@@ -15,30 +16,31 @@
         overflow-x: hidden;
     }
 
+    /* orbs suaves e pouco contrastantes */
     body::before,
     body::after {
         content: '';
         position: fixed;
-        width: 400px;
-        height: 800px;
+        width: 340px;
+        height: 700px;
         border-radius: 50%;
-        filter: blur(250px);
-        opacity: 1;
+        filter: blur(140px);
+        opacity: 0.9;
         z-index: -1;
         pointer-events: none;
         transition: all 0.3s ease;
     }
 
     body::before {
-        top: -150px;
-        left: -250px;
-        background: radial-gradient(circle, #ff3c00, transparent 70%);
+        top: -130px;
+        left: -220px;
+        background: radial-gradient(circle, rgba(255,122,58,0.16), transparent 70%);
     }
 
     body::after {
-        bottom: -150px;
-        right: -200px;
-        background: radial-gradient(circle, #ff6b00, transparent 70%);
+        bottom: -130px;
+        right: -180px;
+        background: radial-gradient(circle, rgba(255,163,77,0.12), transparent 70%);
     }
 
     

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Provas - Aprende+</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/ensino.css" />
+  <link rel="stylesheet" href="css/provas.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo"><img src="css/img/aprende+.png" alt="Aprende+" style="height:48px"/></div>
+    <nav class="navbar">
+      <a href="index.html" class="nav-link">Início</a>
+      <a href="menudeensino.html" class="nav-link active">Menu de ensino</a>
+      <a href="provas.html" class="nav-link">Provas</a>
+    </nav>
+    <div class="login-button">
+      <a href="#" id="openLogin">Login</a>
+      <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema">🌗</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="main-container-proof">
+      <h1 class="section-title">Provas</h1>
+      <!-- controle do professor: permitir refazer atividade -->
+      <div style="max-width:900px;margin:8px auto 18px;color:inherit;display:flex;align-items:center;gap:12px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#374151">
+          <input type="checkbox" id="allowRetakeToggle" />
+          <span>Permitir refazer a atividade (alunos)</span>
+        </label>
+      </div>
+      <p style="max-width:900px;margin:0 auto 20px;color:inherit;">Realize simulados, teste seus conhecimentos e acompanhe seus resultados. Este é um protótipo funcional para testar fluxo de prova e salvar resultados localmente.</p>
+
+      <section class="cards-grid">
+        <div class="card-simulado">
+          <div>
+            <h3>Simulado de Português</h3>
+            <p>20 questões • sem tempo</p>
+          </div>
+          <div class="card-footer-actions">
+            <button class="sidebar-btn primary-action" data-test="portugues" onclick="startTest('portugues')">Iniciar</button>
+          </div>
+        </div>
+
+        <div class="card-simulado">
+          <div>
+            <h3>Simulado de Matemática</h3>
+            <p>20 questões • sem tempo</p>
+          </div>
+          <div class="card-footer-actions">
+            <button class="sidebar-btn primary-action" data-test="matematica" onclick="startTest('matematica')">Iniciar</button>
+          </div>
+        </div>
+
+        <div class="card-simulado">
+          <div>
+            <h3>Simulado Geral</h3>
+            <p>10 questões mistas</p>
+          </div>
+          <div class="card-footer-actions">
+            <button class="sidebar-btn primary-action" data-test="geral" onclick="startTest('geral')">Iniciar</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal de prova simples -->
+    <div id="testModal" class="modal">
+      <div class="modal-content" id="modalContent">
+        <span class="close-btn" id="closeTest">×</span>
+        <h2 id="modalTitle">Prova</h2>
+        <div id="questionArea" style="margin-top:12px;color:inherit"></div>
+        <div style="margin-top:18px;text-align:right;">
+          <button id="nextBtn" class="sidebar-btn primary-action">Próxima</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">© 2025 Aprende+</footer>
+
+  <script src="js/theme-toggle.js"></script>
+  <script src="js/provas.js"></script>
+</body>
+</html>

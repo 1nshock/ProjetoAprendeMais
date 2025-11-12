@@ -6,38 +6,41 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #000;
-  color: #fff;
+  /* fundo bem suave, menos contraste que branco puro */
+  background: linear-gradient(180deg, #fbfdff 0%, #f6f9fc 100%);
+  color: #111827; /* cinza muito escuro porém confortável */
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-
+/* orbs suaves para manter identidade visual, agora com menor contraste */
 body::before,
 body::after {
   content: '';
   position: fixed;
-  width: 400px;
-  height: 800px;
+  width: 340px;
+  height: 540px;
   border-radius: 50%;
-  filter: blur(250px);
-  opacity: 1;
+  filter: blur(140px);
+  opacity: 0.12; /* orbs bem sutis */
   z-index: -1;
   pointer-events: none;
   transition: all 0.3s ease;
 }
 
 body::before {
-  top: -150px;
-  left: -250px;
-  background: radial-gradient(circle, #ff3c00, transparent 70%);
+  top: -120px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(255,122,58,0.10), transparent 70%);
 }
 
 body::after {
-  bottom: -150px;
-  right: -200px;
-  background: radial-gradient(circle, #ff6b00, transparent 70%);
+  bottom: -120px;
+  right: -160px;
+  background: radial-gradient(circle, rgba(255,163,77,0.08), transparent 70%);
 }
 
 
@@ -56,8 +59,8 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 40px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.8); /* claro por padrão, mais suave */
+  backdrop-filter: blur(6px);
   z-index: 1000;
 }
 
@@ -77,7 +80,7 @@ a {
 .nav-link {
   font-size: 16px;
   padding: 5px 0;
-  color: #ddd;
+  color: #334155; /* tom levemente mais suave */
   position: relative;
 }
 
@@ -137,11 +140,32 @@ a {
   padding: 12px 24px;
   border-radius: 6px;
   background: transparent;
-  border: 1px solid #fff;
-  color: #fff;
+  border: 1px solid rgba(31,41,55,0.06);
+  color: inherit;
   cursor: pointer;
   font-weight: 500;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.18s ease;
+}
+
+/* botões laterais/padrão usados pela app */
+.sidebar-btn {
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* botão de alternar tema no header */
+.theme-toggle {
+  margin-left: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(16,24,40,0.06);
+  background: rgba(255,255,255,0.6);
+  cursor: pointer;
+  font-size: 18px;
 }
 
 .btn.primary {
@@ -219,14 +243,63 @@ a {
   user-select: none;
 }
 .footer {
-  background-color: rgba(0,0,0,0.7);
-  backdrop-filter: blur(10px);
+  background-color: rgba(250,250,250,0.9);
+  backdrop-filter: blur(6px);
   padding: 20px 40px;
   text-align: center;
-  color: #aaa;
+  color: #4b5563;
   font-size: 14px;
   position: absolute;
   bottom: 0;
   width: 100%;
   margin-top: 40px;
+}
+
+/* --- Tema escuro (alternável) --- */
+body.dark-theme {
+  background: linear-gradient(180deg, #000000 0%, #0b0b0b 100%);
+  color: #fff;
+}
+
+body.dark-theme::before {
+  background: radial-gradient(circle, rgba(255,60,0,0.95), transparent 70%);
+  width: 400px;
+  height: 800px;
+  filter: blur(250px);
+}
+
+body.dark-theme::after {
+  background: radial-gradient(circle, rgba(255,107,0,0.9), transparent 70%);
+}
+
+body.dark-theme .topbar {
+  background: rgba(0,0,0,0.7);
+}
+
+body.dark-theme .nav-link {
+  color: #ddd;
+}
+
+body.dark-theme .btn {
+  color: #fff;
+  border-color: rgba(255,255,255,0.08);
+}
+
+body.dark-theme .modal-content {
+  background-color: #111;
+  color: #fff;
+}
+
+/* fontes menos pesadas para leitura prolongada */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+}
+
+p, label, a, button {
+  font-weight: 400;
+}
+
+body.dark-theme .footer {
+  background-color: rgba(0,0,0,0.7);
+  color: #aaa;
 }

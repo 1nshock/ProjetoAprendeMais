@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Progresso - Aprende+</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/ensino.css" />
+  <style>
+    .progress-card { padding:18px; background: #fff; border-radius:8px; box-shadow: 0 6px 22px rgba(0,0,0,0.06); }
+    .progress-bar { height:14px; background: rgba(0,0,0,0.08); border-radius:999px; overflow:hidden; }
+    .progress-bar > i { display:block; height:100%; background: linear-gradient(90deg,#ff8b4a,#ff4b00); width:0%; }
+    .attempts { margin-top:16px; }
+    .attempt { padding:12px; border-radius:6px; background: #f7fafc; margin-bottom:10px; color: #111827; }
+    .attempt .meta { font-size:12px; color:#6b7280; margin-top:6px }
+    body.dark-theme .progress-card { background: #222; box-shadow:none; }
+    body.dark-theme .progress-bar { background: rgba(255,255,255,0.06); }
+    body.dark-theme .attempt { background: #1f2937; color: #fff }
+    body.dark-theme .attempt .meta { color: #9ca3af }
+    /* evitar que conteúdo final seja coberto pelo footer fixo */
+    .content { padding-bottom: 140px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo"><img src="css/img/aprende+.png" alt="Aprende+" style="height:48px"/></div>
+    <nav class="navbar">
+      <a href="index.html" class="nav-link">Início</a>
+      <a href="menudeensino.html" class="nav-link active">Menu de ensino</a>
+      <a href="progresso.html" class="nav-link">Progresso</a>
+    </nav>
+    <div class="login-button">
+      <a href="#" id="openLogin">Login</a>
+      <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema">🌗</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1 class="section-title">Seu Progresso</h1>
+    <p style="max-width:900px;margin:0 auto 20px;color:inherit;">Painel com seu desempenho recente nas provas realizadas.</p>
+
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;">
+      <section>
+        <div class="progress-card">
+          <h3>Resumo Geral</h3>
+          <p id="summaryText">Carregando...</p>
+          <div style="margin-top:12px">
+            <div class="progress-bar"><i id="summaryBar"></i></div>
+          </div>
+          <div class="attempts" id="attemptsList"></div>
+        </div>
+
+        <div style="height:24px"></div>
+
+        <div class="progress-card">
+          <h3>Por Matéria</h3>
+          <div style="margin-top:12px">
+            <label>Português</label>
+            <div class="progress-bar"><i id="barPort" style="width:30%"></i></div>
+            <label style="margin-top:12px">Matemática</label>
+            <div class="progress-bar"><i id="barMath" style="width:30%"></i></div>
+            <label style="margin-top:12px">Geral</label>
+            <div class="progress-bar"><i id="barGen" style="width:30%"></i></div>
+          </div>
+        </div>
+      </section>
+
+      <aside>
+        <div class="progress-card">
+          <h3>Dicas Rápidas</h3>
+          <ul>
+            <li>Pratique em blocos de 25 minutos.</li>
+            <li>Revise erros imediatamente após o simulado.</li>
+            <li>Use a página de Provas para repetir exercícios.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <footer class="footer">© 2025 Aprende+</footer>
+
+  <script src="js/theme-toggle.js"></script>
+  <script src="js/progresso.js"></script>
+</body>
+</html>

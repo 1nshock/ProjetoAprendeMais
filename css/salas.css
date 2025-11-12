@@ -1,13 +1,13 @@
 :root {
-    --bg-dark: #000000;
-    --main-bg-container: #333333;
-    --room-card-bg: #555555;
-    --text-light: #ffffff;
-    --action-enter: #ff4500;
-    --action-create: #00dd07;
-    --action-edit: #fff237;
-    --action-delete: #ff0000;
-    --toggle-icon-color: #aaaaaa; /* Nova variável para cor do ícone */
+    --bg-dark: #f7fbff; /* agora um fundo claro */
+    --main-bg-container: #ffffff; /* container principal branco */
+    --room-card-bg: #f1f5f9; /* cartões levemente acinzentados */
+    --text-light: #1f2937; /* cor do texto mais escura, confortável */
+    --action-enter: #ff7a3a; /* laranja suave */
+    --action-create: #22c55e; /* verde mais suave */
+    --action-edit: #fbbf24; /* amarelo suave */
+    --action-delete: #ef4444; /* vermelho menos agressivo */
+    --toggle-icon-color: #6b7280; /* cor do ícone */
 }
 
 * {
@@ -18,7 +18,7 @@
 
 
 body {
-    background-color: var(--bg-dark);
+    background: linear-gradient(180deg, var(--bg-dark) 0%, #eef6fb 100%);
     color: var(--text-light);
     font-family: Arial, sans-serif;
     min-height: 100vh;
@@ -34,27 +34,27 @@ body::after {
     content: '';
     position: absolute;
     border-radius: 50%; 
-    filter: blur(100px); 
+    filter: blur(90px); 
     z-index: -1; 
     pointer-events: none; 
 }
 
 body::before {
-    top: -150px;
-    left: -150px;
-    width: 350px;
-    height: 350px;
-    background: radial-gradient(circle, var(--action-enter) 0%, rgba(255, 69, 0, 0.4) 30%, transparent 70%);
-    animation: moveOrb1 15s infinite alternate ease-in-out;
+    top: -120px;
+    left: -120px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255,122,58,0.16) 0%, rgba(255,122,58,0.08) 40%, transparent 70%);
+    animation: moveOrb1 18s infinite alternate ease-in-out;
 }
 
 body::after {
-    bottom: -100px;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, var(--action-enter) 0%, rgba(255, 69, 0, 0.3) 35%, transparent 75%);
-    animation: moveOrb2 20s infinite alternate-reverse ease-in-out;
+    bottom: -80px;
+    right: -80px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(255,163,77,0.12) 0%, rgba(255,163,77,0.06) 45%, transparent 75%);
+    animation: moveOrb2 22s infinite alternate-reverse ease-in-out;
 }
 
 @keyframes moveOrb1 {
@@ -441,3 +441,75 @@ body::after {
 
 .confirm-btn { background-color: var(--action-create); }
 .cancel-btn { background-color: var(--action-delete); }
+
+
+body.dark-theme {
+    --bg-dark: #000000;
+    --main-bg-container: #333333;
+    --room-card-bg: #555555;
+    --text-light: #000000;
+    --action-enter: #ff4500;
+    --action-create: #00dd07;
+    --action-edit: #fff237;
+    --action-delete: #ff0000;
+    --toggle-icon-color: #aaaaaa;
+}
+
+body.dark-theme .room-card-name {
+    color: #ffffff;
+}
+
+body.dark-theme .room-card-capacity {
+    color: #ffffff;
+}
+
+body.dark-theme .room-toggle-btn {
+    color: #ffffff;
+}
+
+body.dark-theme .room-desc-panel {
+    color: #ddd;
+    background-color: rgba(255,255,255,0.12);
+}
+
+/* --- Tema claro (padr�o) --- */
+body.light-theme .room-card-name {
+    color: #1f2937;
+}
+
+body.light-theme .room-card-capacity {
+    color: #1f2937;
+}
+
+body.light-theme .room-toggle-btn {
+    color: #1f2937;
+}
+
+body.light-theme .room-desc-panel {
+    color: #4b5563;
+    background-color: rgba(0,0,0,0.08);
+}
+
+/* --- Botão de alternar tema --- */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(16,24,40,0.06);
+    background: rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 999;
+}
+
+body.dark-theme .theme-toggle {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.1);
+}
+
+body.light-theme .theme-toggle {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(16,24,40,0.06);
+}

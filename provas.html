@@ -25,23 +25,26 @@
   <main class="content">
     <div class="main-container-proof">
       <h1 class="section-title">Provas</h1>
-      <!-- controle do professor: permitir refazer atividade -->
-      <div style="max-width:900px;margin:8px auto 18px;color:inherit;display:flex;align-items:center;gap:12px;">
-        <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#374151">
-          <input type="checkbox" id="allowRetakeToggle" />
-          <span>Permitir refazer a atividade (alunos)</span>
-        </label>
-      </div>
+      <!-- controle do professor: per-activity toggles (retake / view answers) -->
       <p style="max-width:900px;margin:0 auto 20px;color:inherit;">Realize simulados, teste seus conhecimentos e acompanhe seus resultados. Este é um protótipo funcional para testar fluxo de prova e salvar resultados localmente.</p>
 
+      <div class="activity-toolbar" style="max-width:1100px;margin:8px auto 18px;display:flex;justify-content:flex-end">
+        <button id="openCreateActivity" class="sidebar-btn primary-action create-activity-btn">+ Criar Atividade</button>
+      </div>
+
       <section class="cards-grid">
-        <div class="card-simulado">
+        <div id="customActivities" style="max-width:1100px;margin:0 auto 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"></div>
+
+          <div class="card-simulado">
           <div>
             <h3>Simulado de Português</h3>
             <p>20 questões • sem tempo</p>
           </div>
           <div class="card-footer-actions">
-            <button class="sidebar-btn primary-action" data-test="portugues" onclick="startTest('portugues')">Iniciar</button>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="sidebar-btn primary-action btn-pill" data-test="portugues" onclick="startTest('portugues')">Iniciar</button>
+              <button class="sidebar-btn secondary btn-pill" onclick="openCreateModalFor && openCreateModalFor('portugues')">Detalhes</button>
+            </div>
           </div>
         </div>
 
@@ -51,7 +54,10 @@
             <p>20 questões • sem tempo</p>
           </div>
           <div class="card-footer-actions">
-            <button class="sidebar-btn primary-action" data-test="matematica" onclick="startTest('matematica')">Iniciar</button>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="sidebar-btn primary-action btn-pill" data-test="matematica" onclick="startTest('matematica')">Iniciar</button>
+              <button class="sidebar-btn secondary btn-pill" onclick="openCreateModalFor && openCreateModalFor('matematica')">Detalhes</button>
+            </div>
           </div>
         </div>
 
@@ -61,7 +67,10 @@
             <p>10 questões mistas</p>
           </div>
           <div class="card-footer-actions">
-            <button class="sidebar-btn primary-action" data-test="geral" onclick="startTest('geral')">Iniciar</button>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="sidebar-btn primary-action btn-pill" data-test="geral" onclick="startTest('geral')">Iniciar</button>
+              <button class="sidebar-btn secondary btn-pill" onclick="openCreateModalFor && openCreateModalFor('geral')">Detalhes</button>
+            </div>
           </div>
         </div>
       </section>
@@ -78,6 +87,34 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de criação de atividade -->
+    <div id="createActivityModal" class="modal" style="display:none">
+      <div class="modal-content">
+        <span class="close-btn" id="closeCreateActivity">×</span>
+        <h2 id="createModalTitle">Criar Atividade</h2>
+        <div style="margin-top:12px">
+          <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+            <input type="text" id="activityTitle" placeholder="Título da atividade" style="flex:1;padding:12px 14px;min-width:0;" />
+            <input type="text" id="activityKey" placeholder="Chave (opcional, sem espaços)" style="width:220px;padding:12px 14px;" />
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="activityAllowRetake" /> Permitir refazer</label>
+            <label style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="activityAllowView" /> Permitir ver respostas</label>
+          </div>
+
+          <div id="questionsContainer" style="margin-top:10px"></div>
+          <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+            <button id="addQuestionBtn" class="sidebar-btn">Adicionar Questão</button>
+            <button id="saveActivityBtn" class="sidebar-btn primary-action">Salvar Atividade</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="menudeensino.html" class="voltar">Voltar</a>
+    </nav>
 
   </main>
 

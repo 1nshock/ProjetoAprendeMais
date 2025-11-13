@@ -25,61 +25,327 @@
   };
 
   // teacher setting: allow students to retake activities
-  function getAllowRetake(){
+  // Supports a global flag `provas-allow-retake` and optional per-subject flags
+  // `provas-allow-retake-<subject>` which override the global setting when present.
+  function getAllowRetake(subject){
     try{
+      if(subject){
+        const rawSub = localStorage.getItem('provas-allow-retake-' + subject);
+        if(rawSub !== null) return rawSub === 'true';
+      }
       const raw = localStorage.getItem('provas-allow-retake');
-      if(raw === null) return true; // default: allow
+      if(raw === null) return false; // default: do NOT allow retake
       return raw === 'true';
-    }catch(e){return true}
+    }catch(e){return false}
   }
 
-  // initialize teacher toggle (if present on page)
+  // initialize teacher toggles (global and per-subject if present on the page)
   (function initAllowToggle(){
-    const el = document.getElementById('allowRetakeToggle');
-    if(!el) return;
+    // global toggle (id=allowRetakeToggle)
+    const globalEl = document.getElementById('allowRetakeToggle');
+    if(globalEl){
+      try{
+        globalEl.checked = getAllowRetake();
+        globalEl.addEventListener('change', ()=>{
+          localStorage.setItem('provas-allow-retake', globalEl.checked ? 'true' : 'false');
+        });
+      }catch(e){}
+    }
+
+    // per-subject toggles: add elements with attribute `data-allow-retake-subject="<subject>"`
     try{
-      el.checked = getAllowRetake();
-      el.addEventListener('change', ()=>{
-        localStorage.setItem('provas-allow-retake', el.checked ? 'true' : 'false');
+      const perEls = document.querySelectorAll('[data-allow-retake-subject]');
+      perEls.forEach(el=>{
+        const subject = el.getAttribute('data-allow-retake-subject');
+        try{
+          el.checked = getAllowRetake(subject);
+          el.addEventListener('change', ()=>{
+            localStorage.setItem('provas-allow-retake-' + subject, el.checked ? 'true' : 'false');
+          });
+        }catch(e){}
       });
-    }catch(e){/* ignore */}
+    }catch(e){}
+    
+    // per-subject view-answers toggles: attribute `data-view-answers-subject="<subject>"`
+    try{
+      const viewEls = document.querySelectorAll('[data-view-answers-subject]');
+      viewEls.forEach(el=>{
+        const subject = el.getAttribute('data-view-answers-subject');
+        try{
+          el.checked = getAllowViewAnswers(subject);
+          el.addEventListener('change', ()=>{
+            localStorage.setItem('provas-allow-view-' + subject, el.checked ? 'true' : 'false');
+          });
+        }catch(e){}
+      });
+    }catch(e){}
   })();
+
+  // teacher setting: allow students to view corrections/answers per-activity
+  // Checks `provas-allow-view-<subject>` in localStorage; default: false (don't show)
+  function getAllowViewAnswers(subject){
+    try{
+      if(!subject) return false;
+      const raw = localStorage.getItem('provas-allow-view-' + subject);
+      if(raw === null) return false;
+      return raw === 'true';
+    }catch(e){return false}
+  }
 
   let running = false;
   let current = null;
   let index = 0;
   let score = 0;
 
+  // activity storage helpers
+  function loadActivities(){
+    try{ const raw = localStorage.getItem('provas-activities'); return raw ? JSON.parse(raw) : []; }catch(e){return []}
+  }
+  function saveActivities(arr){ try{ localStorage.setItem('provas-activities', JSON.stringify(arr)); }catch(e){}
+  }
+  function renderActivities(){
+    const container = document.getElementById('customActivities');
+    if(!container) return;
+    const parentGrid = container.parentElement || container;
+    // remove previously rendered custom cards (to avoid duplicates/overlap)
+    Array.from(parentGrid.querySelectorAll('[data-custom="true"]')).forEach(n=>n.remove());
+    const activities = loadActivities();
+    activities.forEach(a=>{
+      const card = document.createElement('div'); card.className='card-simulado'; card.setAttribute('data-custom','true');
+      const footer = document.createElement('div'); footer.className='card-footer-actions';
+      const left = document.createElement('div'); left.innerHTML = `<div><h3>${escapeHtml(a.title)}</h3><p>${(a.questions||[]).length} questões</p></div>`;
+      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px'; actions.style.alignItems='center';
+      const startBtn = document.createElement('button'); startBtn.className='sidebar-btn primary-action btn-pill'; startBtn.textContent='Iniciar'; startBtn.addEventListener('click', ()=> startTest(a.id));
+      const editBtn = document.createElement('button'); editBtn.className='sidebar-btn secondary btn-pill'; editBtn.textContent='Editar'; editBtn.addEventListener('click', ()=> { window.openCreateModal && window.openCreateModal(a); });
+      const delBtn = document.createElement('button'); delBtn.className='sidebar-btn secondary btn-pill'; delBtn.textContent='Excluir'; delBtn.addEventListener('click', ()=>{
+        if(!confirm('Excluir atividade "'+ (a.title || a.id) +'"?')) return;
+        const list = loadActivities(); const idx = list.findIndex(x=>x.id===a.id); if(idx>=0) { list.splice(idx,1); saveActivities(list); renderActivities(); }
+      });
+      actions.appendChild(startBtn); actions.appendChild(editBtn); actions.appendChild(delBtn);
+      footer.appendChild(actions);
+      card.appendChild(left);
+      card.appendChild(footer);
+      parentGrid.appendChild(card);
+    });
+  }
+
+  // create activity modal wiring
+  (function initCreateActivity(){
+    const openBtn = document.getElementById('openCreateActivity');
+    const modalCreate = document.getElementById('createActivityModal');
+    const closeCreate = document.getElementById('closeCreateActivity');
+    const addQ = document.getElementById('addQuestionBtn');
+    const saveBtn = document.getElementById('saveActivityBtn');
+    const qContainer = document.getElementById('questionsContainer');
+    const titleInput = document.getElementById('activityTitle');
+    const keyInput = document.getElementById('activityKey');
+    const allowRetake = document.getElementById('activityAllowRetake');
+    const allowView = document.getElementById('activityAllowView');
+
+    function open(){ if(modalCreate) modalCreate.style.display='flex'; }
+    function close(){ if(modalCreate) modalCreate.style.display='none'; }
+
+    if(openBtn) openBtn.addEventListener('click', ()=>{ renderQuestionBlocks(); open(); });
+    if(closeCreate) closeCreate.addEventListener('click', ()=>{ close(); });
+
+    function makeQuestionBlock(q){
+      const wrap = document.createElement('div'); wrap.className='question-block'; wrap.style.padding='8px'; wrap.style.borderBottom='1px solid rgba(0,0,0,0.06)';
+      const qid = 'q-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+      wrap.dataset.qid = qid;
+      wrap.innerHTML = `
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <strong>Q</strong>
+          <select class="q-type" style="width:180px;padding:6px;border-radius:6px;margin-left:6px">
+            <option value="mc">Múltipla escolha</option>
+            <option value="tf">Verdadeiro / Falso</option>
+          </select>
+          <input type="text" class="q-text" placeholder="Enunciado" style="flex:1;padding:6px;margin-left:8px" value="${q && escapeHtml(q.q) || ''}" />
+        </div>
+        <div class="opts" style="display:flex;flex-direction:column;gap:6px">
+        </div>
+        <div style="margin-top:6px;display:flex;gap:8px;justify-content:flex-end"><button class="add-opt sidebar-btn">+ Opção</button><button class="remove-q sidebar-btn">Remover</button></div>
+      `;
+      const optsDiv = wrap.querySelector('.opts');
+      const typeEl = wrap.querySelector('.q-type');
+      // set initial type from data if provided
+      if(q && q.type === 'tf') typeEl.value = 'tf';
+      wrap.dataset.qtype = typeEl.value;
+
+      function addOpt(val, isCorrect, fixed){
+        const oWrap = document.createElement('div'); oWrap.style.display='flex'; oWrap.style.gap='8px'; oWrap.style.alignItems='center';
+        const radio = document.createElement('input'); radio.type='radio'; radio.name='correct-'+ wrap.dataset.qid; radio.className='opt-correct';
+        const input = document.createElement('input'); input.type='text'; input.className='opt-text'; input.placeholder='Opção'; input.style.flex='1'; input.value = val||'';
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'opt-del sidebar-btn'; del.title = 'Remover esta opção'; del.textContent = '✖';
+
+        if(fixed){
+          // fixed options (used for Verdadeiro/Falso): make readonly and hide delete
+          input.readOnly = true;
+          del.style.display = 'none';
+        }
+
+        // delete only this option (if more than 1 option remains)
+        del.addEventListener('click', ()=>{
+          const currentOpts = Array.from(optsDiv.querySelectorAll('.opt-text'));
+          if(currentOpts.length <= 2){
+            alert('A questão precisa ter ao menos 2 opções.');
+            return;
+          }
+          oWrap.remove();
+        });
+
+        oWrap.appendChild(radio); oWrap.appendChild(input); oWrap.appendChild(del);
+        optsDiv.appendChild(oWrap);
+        if(isCorrect) radio.checked = true;
+        return oWrap;
+      }
+
+      // initial options: if TF, create fixed Verd/Fal options, otherwise use provided opts or two blanks
+      if(typeEl.value === 'tf'){
+        const correctIndex = (q && typeof q.a === 'number') ? q.a : 0;
+        addOpt('Verdadeiro', correctIndex === 0, true);
+        addOpt('Falso', correctIndex === 1, true);
+        wrap.querySelector('.add-opt').style.display = 'none';
+      } else if(q && q.opts && q.opts.length){
+        q.opts.forEach((oo,i)=> addOpt(oo, i===q.a));
+      } else { addOpt(''); addOpt(''); }
+
+      // when question type changes, rebuild options accordingly
+      typeEl.addEventListener('change', ()=>{
+        wrap.dataset.qtype = typeEl.value;
+        optsDiv.innerHTML = '';
+        if(typeEl.value === 'tf'){
+          addOpt('Verdadeiro', true, true);
+          addOpt('Falso', false, true);
+          wrap.querySelector('.add-opt').style.display = 'none';
+        } else {
+          addOpt(''); addOpt('');
+          wrap.querySelector('.add-opt').style.display = '';
+        }
+      });
+
+      wrap.querySelector('.add-opt').addEventListener('click', ()=> addOpt(''));
+      wrap.querySelector('.remove-q').addEventListener('click', ()=> wrap.remove());
+      return wrap;
+    }
+
+    function renderQuestionBlocks(existing){ qContainer.innerHTML=''; (existing||[]).forEach(q=> qContainer.appendChild(makeQuestionBlock(q))); if(!(existing && existing.length)) qContainer.appendChild(makeQuestionBlock()); }
+
+    if(addQ) addQ.addEventListener('click', ()=>{ qContainer.appendChild(makeQuestionBlock()); });
+
+    if(saveBtn) saveBtn.addEventListener('click', ()=>{
+      const title = (titleInput && titleInput.value || '').trim();
+      if(!title) return alert('Informe o título da atividade');
+      let key = (keyInput && keyInput.value || '').trim();
+      if(!key) key = 'act-'+Date.now();
+      // ensure unique id (or update existing)
+      const activities = loadActivities();
+      const existingIndex = activities.findIndex(a=>a.id===key);
+      if(existingIndex === -1){ if(activities.find(a=>a.id===key)) key = key + '-' + Date.now(); }
+      // collect questions
+      const qblocks = Array.from(qContainer.querySelectorAll('.question-block'));
+      const questions = [];
+      for(const pb of qblocks){
+        const qtxt = (pb.querySelector('.q-text').value || '').trim();
+        const qtype = (pb.querySelector('.q-type') && pb.querySelector('.q-type').value) ? pb.querySelector('.q-type').value : 'mc';
+        const optEls = Array.from(pb.querySelectorAll('.opt-text'));
+        const radios = Array.from(pb.querySelectorAll('.opt-correct'));
+        const optInputs = [];
+        let correct = -1;
+        for(let i=0;i<optEls.length;i++){
+          const v = (optEls[i].value||'').trim();
+          if(v.length){
+            // if the radio corresponding to this input is checked, mark correct as the index in the filtered list
+            if(radios[i] && radios[i].checked) correct = optInputs.length;
+            optInputs.push(v);
+          } else {
+            // if radio was checked for an empty input, force incorrect (will fail validation below)
+            if(radios[i] && radios[i].checked) correct = -1;
+          }
+        }
+        // validation: question text + at least 2 options + one correct
+        if(!qtxt){ return alert('Cada questão precisa ter um enunciado.'); }
+        if(optInputs.length < 2){ return alert('Cada questão precisa ter pelo menos 2 opções preenchidas.'); }
+        if(correct < 0 || correct >= optInputs.length){ return alert('Marque a opção correta em cada questão.'); }
+        const qobj = { q: qtxt, opts: optInputs, a: correct };
+        if(qtype === 'tf') qobj.type = 'tf';
+        questions.push(qobj);
+      }
+      if(questions.length === 0) return alert('Adicione ao menos uma questão.');
+
+      const activity = { id: key, title, questions };
+      if(existingIndex >= 0){ activities[existingIndex] = activity; }
+      else { activities.unshift(activity); }
+      saveActivities(activities);
+      // save flags
+      try{ localStorage.setItem('provas-allow-retake-' + key, (allowRetake && allowRetake.checked) ? 'true' : 'false'); }catch(e){}
+      try{ localStorage.setItem('provas-allow-view-' + key, (allowView && allowView.checked) ? 'true' : 'false'); }catch(e){}
+      // re-render activities and close
+      renderActivities();
+      if(modalCreate) modalCreate.style.display='none';
+    });
+
+    // expose a helper to open the create modal with a given activity object (for editing/builtin preview)
+    window.openCreateModal = function(activity){
+      if(!modalCreate) return;
+      titleInput.value = activity.title || '';
+      keyInput.value = activity.id || '';
+      try{ allowRetake.checked = getAllowRetake(activity.id); }catch(e){ allowRetake.checked = false }
+      try{ allowView.checked = getAllowViewAnswers(activity.id); }catch(e){ allowView.checked = false }
+      renderQuestionBlocks(activity.questions || []);
+      modalCreate.style.display = 'flex';
+    };
+
+    // helper that builds an activity object from built-in QUESTIONS and opens the modal
+    window.openCreateModalFor = function(subject){
+      const qlist = (QUESTIONS && QUESTIONS[subject]) ? QUESTIONS[subject].map(q=>({ q: q.q, opts: q.opts.slice(), a: q.a })) : [];
+      const title = (subject === 'portugues') ? 'Simulado de Português' : (subject === 'matematica' ? 'Simulado de Matemática' : (subject === 'geral' ? 'Simulado Geral' : subject));
+      const act = { id: subject, title, questions: qlist };
+      window.openCreateModal(act);
+    };
+
+    // initial render
+    renderActivities();
+  })();
+
   window.startTest = function(subject){
     if(running) return;
+    // support activities created by teacher (stored in localStorage)
+    let subjectKey = subject;
+    let activity = null;
+    try{ const acts = loadActivities(); activity = acts.find(a=>a.id === subject); }catch(e){}
+    let list = [];
+    let displayTitle = subject;
+    if(activity){
+      subjectKey = activity.id;
+      list = activity.questions || [];
+      displayTitle = activity.title || subjectKey;
+    } else {
+      list = QUESTIONS[subject] || [];
+      displayTitle = subject;
+    }
+
     // if teacher disallowed retake and this subject was already taken, block
     try{
-      if(!getAllowRetake()){
-        const taken = localStorage.getItem('provas-taken-' + subject);
+      if(!getAllowRetake(subjectKey)){
+        const taken = localStorage.getItem('provas-taken-' + subjectKey);
         if(taken === 'true'){
-          // show previous result instead of alert
           try{
             const raw = localStorage.getItem('provas-results');
             const arr = raw ? JSON.parse(raw) : [];
-            const prev = arr.find(r=>r.subject === subject);
-            if(prev){
-              // show previous result panel (no refazer)
-              showPreviousResult(prev);
-              return;
-            }
+            const prev = arr.find(r=>r.subject === subjectKey);
+            if(prev){ showPreviousResult(prev); return; }
           }catch(e){}
-          // fallback message
           showSimpleMessage('Refazer esta atividade está desabilitado pelo professor.');
           return;
         }
       }
     }catch(e){}
-    const list = QUESTIONS[subject] || [];
+
     if(!list.length) return alert('Nenhuma questão disponível');
     running = true;
-    current = {subject, list, answers: []};
+    current = { subject: subjectKey, list: list, answers: [], title: displayTitle };
     index = 0; score = 0;
-    modalTitle.textContent = 'Simulado — ' + subject;
+    modalTitle.textContent = 'Simulado — ' + displayTitle;
     showModal();
     renderQuestion();
   }
@@ -122,7 +388,7 @@
     const percent = Math.round((score / current.list.length) * 100);
     hideModal();
     running=false;
-    const result = {subject: current.subject, score, total: current.list.length, percent, date: new Date().toISOString(), answers: current.answers};
+    const result = {subject: current.subject, title: current.title, score, total: current.list.length, percent, date: new Date().toISOString(), answers: current.answers};
     saveResult(result);
     // mostrar resultado elegante dentro do modal (inclui opção de ver correções)
     showResult(result);
@@ -150,7 +416,7 @@
     modal.style.display = 'flex';
     const html = `
       <div class="test-result" style="padding:12px 0 6px">
-        <h2>Resultado — ${escapeHtml(res.subject)}</h2>
+        <h2>Resultado — ${escapeHtml(res.title || res.subject)}</h2>
         <div style="display:flex;gap:18px;align-items:center;margin-top:12px;flex-wrap:wrap">
           <div style="min-width:120px;text-align:center">
             <div style="font-size:36px;font-weight:700">${res.percent}%</div>
@@ -173,7 +439,13 @@
       </div>
     `;
 
-    // append a removable result panel instead of replacing entire modal content
+    // remove any existing result panels so we replace instead of append
+    try{
+      const existing = modalContent.querySelectorAll('.result-panel');
+      existing.forEach(e=>e.remove());
+    }catch(e){}
+
+    // append a removable result panel
     const panel = document.createElement('div');
     panel.className = 'result-panel';
     panel.innerHTML = html;
@@ -187,8 +459,8 @@
   const correctionsList = panel.querySelector('#correctionsList');
 
     rerun && rerun.addEventListener('click', ()=>{
-      // check teacher setting before restarting
-      if(!getAllowRetake()){
+      // check teacher setting before restarting (per-subject)
+      if(!getAllowRetake(res.subject)){
         // optionally provide feedback
         rerun.disabled = true;
         rerun.title = 'Refazer está desabilitado pelo professor';
@@ -209,17 +481,31 @@
     // navegar para a página de progresso ao clicar (mantendo remoção do painel)
     viewP && viewP.addEventListener('click', ()=>{ panel.remove(); hideModal(); window.location.href = 'progresso.html'; });
 
-    // hide/disable rerun if teacher disallowed retake
+    // hide/disable rerun if teacher disallowed retake (per-subject)
     try{
-      if(!getAllowRetake()){
+      if(!getAllowRetake(res.subject)){
         if(rerun) { rerun.style.display = 'none'; }
       } else {
         if(rerun) { rerun.style.display = ''; rerun.disabled = false; rerun.title = ''; }
       }
     }catch(e){/* ignore */}
 
+    // hide/disable "Ver Correções" if teacher disallowed viewing answers for this subject
+    try{
+      if(!getAllowViewAnswers(res.subject)){
+        if(viewC) { viewC.style.display = 'none'; }
+      } else {
+        if(viewC) { viewC.style.display = ''; }
+      }
+    }catch(e){/* ignore */}
+
     // abrir revisão em um modal dedicado com navegação, ver-todas e exportar
     viewC && viewC.addEventListener('click', ()=>{
+      // verify permission per-subject
+      if(!getAllowViewAnswers(res.subject)){
+        showSimpleMessage('Visualização das respostas está desabilitada pelo professor para esta atividade.');
+        return;
+      }
       // if modal already exists, just toggle visibility
       let reviewModal = document.getElementById('reviewModal');
       if(!reviewModal){
@@ -369,6 +655,8 @@
         </div>
       </div>
     `;
+    // remove previous panels to avoid stacking multiple results
+    try{ const existing = modalContent.querySelectorAll('.result-panel'); existing.forEach(e=>e.remove()); }catch(e){}
     const panel = document.createElement('div');
     panel.className = 'result-panel';
     panel.innerHTML = html;
@@ -378,7 +666,21 @@
     const viewP = panel.querySelector('#viewProgressPrev');
     const closeR = panel.querySelector('#closeResultPrev');
 
+    // hide/show "Ver Correções" depending on per-subject permission
+    try{
+      if(!getAllowViewAnswers(res.subject)){
+        if(viewC) viewC.style.display = 'none';
+      } else {
+        if(viewC) viewC.style.display = '';
+      }
+    }catch(e){}
+
     viewC && viewC.addEventListener('click', ()=>{
+      // verify permission per-subject
+      if(!getAllowViewAnswers(res.subject)){
+        showSimpleMessage('Visualização das respostas está desabilitada pelo professor para esta atividade.');
+        return;
+      }
       // reuse existing review modal logic by calling the same handler as showResult used
       // create a temporary result object if needed
       // show corrections in the review modal
@@ -448,6 +750,8 @@
   // simple inline message panel (fallback)
   function showSimpleMessage(msg){
     modal.style.display = 'flex';
+    // replace any existing result/message panels
+    try{ const existing = modalContent.querySelectorAll('.result-panel'); existing.forEach(e=>e.remove()); }catch(e){}
     const panel = document.createElement('div'); panel.className='result-panel';
     panel.innerHTML = `<div style="padding:12px"><h3>Aviso</h3><div style="margin-top:10px">${escapeHtml(msg)}</div><div style="margin-top:12px;text-align:right"><button class="sidebar-btn" id="closeMsg">Fechar</button></div></div>`;
     modalContent.appendChild(panel);

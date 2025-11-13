@@ -40,7 +40,7 @@
       const el = document.createElement('div');
       el.className = 'attempt';
       const subj = document.createElement('strong');
-      subj.textContent = (r.subject||'—');
+      subj.textContent = (r.title || r.subject || '—');
       el.appendChild(subj);
       el.appendChild(document.createTextNode(' — ' + (r.percent||0) + '%'));
       const meta = document.createElement('div');

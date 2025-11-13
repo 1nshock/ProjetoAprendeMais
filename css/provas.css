@@ -8,8 +8,10 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
+  max-width: 100%;
+  align-items: start;
 }
 
 .card-simulado {
@@ -21,6 +23,8 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
+  max-height: 320px;
+  max-width: 100%;
 }
 
 .card-simulado h3 { margin: 0 0 8px; color: #111827; }
@@ -38,11 +42,15 @@
 
 .sidebar-btn.secondary {
   background: transparent;
-  color: white;
-  border: 1px solid rgba(16,24,40,0.06);
+  color: #111827;
+  border: 1px solid rgba(16,24,40,0.2);
   padding: 8px 12px;
   border-radius: 8px;
   transition: all 200ms ease;
+}
+body.dark-theme .sidebar-btn.secondary {
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 .sidebar-btn.secondary:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(16,24,40,0.06); }
 .sidebar-btn.primary-action{ box-shadow: 0 6px 20px rgba(255,75,0,0.12); transition: transform 160ms ease, box-shadow 160ms ease; }
@@ -239,9 +247,14 @@ body.dark-theme .sidebar-btn.primary-action { background: linear-gradient(90deg,
 /* pequenas melhorias */
 .cards-container { margin-bottom: 22px }
 
-/* customActivities should not force a separate grid; we render its children
-  directly into the main `.cards-grid` via JS. Keep this selector harmless. */
-#customActivities { display:block }
+/* customActivities should display as a grid like cards-grid */
+#customActivities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 100%;
+  margin-bottom: 20px;
+}
 
 /* Ensure each card is positioned normally inside the grid and doesn't overlap */
 .cards-grid > .card-simulado, .cards-grid > div {

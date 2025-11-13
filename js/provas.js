@@ -106,9 +106,8 @@
   function renderActivities(){
     const container = document.getElementById('customActivities');
     if(!container) return;
-    const parentGrid = container.parentElement || container;
     // remove previously rendered custom cards (to avoid duplicates/overlap)
-    Array.from(parentGrid.querySelectorAll('[data-custom="true"]')).forEach(n=>n.remove());
+    Array.from(container.querySelectorAll('[data-custom="true"]')).forEach(n=>n.remove());
     const activities = loadActivities();
     activities.forEach(a=>{
       const card = document.createElement('div'); card.className='card-simulado'; card.setAttribute('data-custom','true');
@@ -125,7 +124,7 @@
       footer.appendChild(actions);
       card.appendChild(left);
       card.appendChild(footer);
-      parentGrid.appendChild(card);
+      container.appendChild(card);
     });
   }
 
@@ -145,7 +144,15 @@
     function open(){ if(modalCreate) modalCreate.style.display='flex'; }
     function close(){ if(modalCreate) modalCreate.style.display='none'; }
 
-    if(openBtn) openBtn.addEventListener('click', ()=>{ renderQuestionBlocks(); open(); });
+    if(openBtn) openBtn.addEventListener('click', ()=>{ 
+      // Reset form for new activity
+      titleInput.value = '';
+      keyInput.value = '';
+      allowRetake.checked = false;
+      allowView.checked = false;
+      renderQuestionBlocks(); 
+      open(); 
+    });
     if(closeCreate) closeCreate.addEventListener('click', ()=>{ close(); });
 
     function makeQuestionBlock(q){

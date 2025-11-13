@@ -253,9 +253,13 @@ body::after {
     flex-shrink: 0;
 }
 
-.action-enter-btn { background-color: var(--action-enter); color: var(--text-light); }
-.action-edit-btn { background-color: var(--action-edit); color: #333; }
-.action-delete-btn { background-color: var(--action-delete); color: var(--text-light); }
+.action-enter-btn { background-color: var(--action-enter); color: white; }
+.action-edit-btn { background-color: var(--action-edit); color: #000; }
+.action-delete-btn { background-color: var(--action-delete); color: white; }
+
+body.dark-theme .action-enter-btn { color: white; }
+body.dark-theme .action-edit-btn { color: #000; }
+body.dark-theme .action-delete-btn { color: white; }
 
 /* Toggle de descrição */
 .room-toggle-btn {
@@ -311,9 +315,9 @@ body::after {
     text-align: center;
 }
 
-.primary-action { background-color: var(--action-create); color: var(--text-light); }
-.secondary-action { background-color: var(--action-edit); color: #333; }
-.danger-action { background-color: var(--action-delete); color: var(--text-light); }
+.primary-action { background-color: var(--action-create); color: #000; }
+.secondary-action { background-color: var(--action-edit); color: #000; }
+.danger-action { background-color: var(--action-delete); color: white; }
 
 .full-width {
     width: 100%;

@@ -394,7 +394,7 @@ body.dark-theme .action-delete-btn { color: white; }
     font-family: inherit;
     /* Ajuste para input de senha dentro do wrapper */
     &::placeholder {
-        color: #aaaaaa;
+        color: #858585;
     }
 }
 
@@ -447,7 +447,7 @@ body.dark-theme {
     --bg-dark: #000000;
     --main-bg-container: #333333;
     --room-card-bg: #555555;
-    --text-light: #000000;
+    --text-light: #ffffff;
     --action-enter: #ff4500;
     --action-create: #00dd07;
     --action-edit: #fff237;

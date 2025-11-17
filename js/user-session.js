@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
       updateUserDisplay(username, tipo);
     }
   });
-  
-  observer.observe(document.documentElement, {
+
+  observer.observe(document.body, {
     attributes: true,
-    attributeFilter: ['data-theme']
+    attributeFilter: ['data-theme', 'class']
   });
 });
 
@@ -32,8 +32,9 @@ function updateUserDisplay(username, tipo) {
     userDisplay.style.cursor = 'pointer';
     
     // Aplicar cor conforme tema - verificar computedStyle
-    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark' || 
-                       window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode = document.body.classList.contains('dark-theme') ||
+               document.documentElement.getAttribute('data-theme') === 'dark' || 
+               window.matchMedia('(prefers-color-scheme: dark)').matches;
     userDisplay.style.color = isDarkMode ? '#fff' : '#333';
     
     // Adicionar opção de logout (sem duplicar listeners)

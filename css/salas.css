@@ -1,3 +1,8 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 :root {
     --bg-dark: #f7fbff; /* agora um fundo claro */
     --main-bg-container: #ffffff; /* container principal branco */
@@ -10,12 +15,12 @@
     --toggle-icon-color: #6b7280; /* cor do ícone */
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+/* Garantir que login-button está alinhado corretamente */
+.login-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
-
 
 body {
     background: linear-gradient(180deg, var(--bg-dark) 0%, #eef6fb 100%);
@@ -90,9 +95,6 @@ body::after {
 }
 
 .voltar {
-    position: fixed;
-    top: 20px;
-    left: 20px;
     padding: 12px 24px;
     background: #f33708;
     color: white;
@@ -100,29 +102,22 @@ body::after {
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
     transition: all 0.3s ease;
     text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
  
 
 .page-header {
-    margin-top: 60px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 20px;
+    display: none;
 }
 
 .page-header h1 {
-    font-size: 36px;
-    margin-bottom: 30px;
-    font-weight: bold;
-    color: inherit;
-    text-align: left;
+    display: none;
 }
 
 
@@ -492,28 +487,4 @@ body.light-theme .room-toggle-btn {
 body.light-theme .room-desc-panel {
     color: #4b5563;
     background-color: rgba(0,0,0,0.08);
-}
-
-/* --- Botão de alternar tema --- */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(16,24,40,0.06);
-    background: rgba(255,255,255,0.6);
-    cursor: pointer;
-    font-size: 18px;
-    z-index: 999;
-}
-
-body.dark-theme .theme-toggle {
-    background: rgba(0,0,0,0.4);
-    border-color: rgba(255,255,255,0.1);
-}
-
-body.light-theme .theme-toggle {
-    background: rgba(255,255,255,0.6);
-    border-color: rgba(16,24,40,0.06);
 }

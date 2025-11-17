@@ -391,10 +391,11 @@ body.dark-theme .action-delete-btn { color: white; }
     color: var(--text-light);
     font-size: 16px;
     font-family: inherit;
-    /* Ajuste para input de senha dentro do wrapper */
-    &::placeholder {
-        color: #aaaaaa;
-    }
+}
+
+/* Ajuste para input de senha dentro do wrapper */
+.input-group input::placeholder {
+    color: #858584;
 }
 
 .toggle-password-btn {

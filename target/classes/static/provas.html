@@ -13,11 +13,12 @@
     <div class="logo"><img src="css/img/aprende+.png" alt="Aprende+" style="height:48px"/></div>
     <nav class="navbar">
       <a href="index.html" class="nav-link">Início</a>
-      <a href="menudeensino.html" class="nav-link active">Menu de ensino</a>
-      <a href="provas.html" class="nav-link">Provas</a>
+      <a href="menudeensino.html" class="nav-link ">Menu de ensino</a>
+      <a href="provas.html" class="nav-link active">Provas</a>
     </nav>
     <div class="login-button">
       <a href="#" id="openLogin">Login</a>
+      <span id="userDisplay" style="display:none; margin-right: 20px;"></span>
       <button id="themeToggle" class="theme-toggle" aria-label="Alternar tema">🌗</button>
     </div>
   </header>
@@ -120,8 +121,25 @@
 
   <footer class="footer">© 2025 Aprende+</footer>
 
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeLogin">&times;</span>
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="username">Usuário:</label>
+        <input type="text" id="username" name="username" required />
+        <label for="password">Senha:</label>
+        <input type="password" id="password" name="password" required />
+        <button type="submit">Entrar</button>
+      </form>
+      <p>Não tem uma conta? <a href="Cadastro.html">Registre-se</a></p>
+    </div>
+  </div>
+
   <script src="js/user-session.js"></script>
   <script src="js/theme-toggle.js"></script>
+  <script src="js/test.js"></script>
+  <script src="js/login.js"></script>
   <script src="js/provas.js"></script>
 </body>
 </html>

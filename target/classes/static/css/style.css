@@ -290,6 +290,10 @@ body.dark-theme .modal-content {
   color: #fff;
 }
 
+body.dark-theme #userDisplay {
+  color: #fff;
+}
+
 /* fontes menos pesadas para leitura prolongada */
 h1, h2, h3, h4, h5 {
   font-weight: 600;

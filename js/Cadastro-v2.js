@@ -1,5 +1,5 @@
-// Configuração do backend
-const BACKEND_URL = 'http://localhost:8080/api';
+// Configuração do backend (usa o domínio atual por padrão)
+const BACKEND_URL = `${(window.API_BASE_URL || window.location.origin).replace(/\/$/, '')}/api`;
 
 // Elementos do DOM
 const menuContainer = document.getElementById('menu');

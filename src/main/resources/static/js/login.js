@@ -1,5 +1,6 @@
-// Backend URL (ajuste conforme necessário)
-const BACKEND_URL = 'http://localhost:8080/api/login';
+// Backend base (usa o mesmo domínio da página por padrão)
+const API_BASE_URL = (window.API_BASE_URL || window.location.origin).replace(/\/$/, '');
+const BACKEND_URL = `${API_BASE_URL}/api/login`;
 
 // Esperar o DOM ser carregado
 document.addEventListener('DOMContentLoaded', () => {
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (error) {
         console.error('Erro ao conectar com o servidor:', error);
-        alert('Erro ao conectar com o servidor! Certifique-se que o backend está rodando em http://localhost:8080');
+        alert('Erro ao conectar com o servidor. Tente novamente em instantes.');
       }
     });
   }

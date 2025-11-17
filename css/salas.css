@@ -111,8 +111,6 @@ body::after {
     text-align: center;
 }
 
- 
-
 .page-header {
     display: none;
 }
@@ -392,12 +390,12 @@ body.dark-theme .action-delete-btn { color: white; }
     color: var(--text-light);
     font-size: 16px;
     font-family: inherit;
-    /* Ajuste para input de senha dentro do wrapper */
-    &::placeholder {
-        color: #858585;
-    }
 }
 
+/* Ajuste para input de senha dentro do wrapper */
+.input-group input::placeholder {
+    color: #858585;
+}
 .toggle-password-btn {
     /* Posiciona o botão de toggle absolutamente dentro do wrapper */
     position: absolute;

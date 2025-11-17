@@ -1,14 +1,8 @@
 // Backend URL (ajuste conforme necessário)
 const BACKEND_URL = 'http://localhost:8080/api/login';
 
-// Verificar se usuário já está logado ao carregar a página
+// Esperar o DOM ser carregado
 document.addEventListener('DOMContentLoaded', () => {
-  const username = sessionStorage.getItem('username');
-  const tipo = sessionStorage.getItem('tipo');
-  
-  if (username) {
-    updateUserDisplay(username, tipo);
-  }
   
   // Abrir/fechar modal de login
   const openLoginBtn = document.getElementById('openLogin');
@@ -61,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
           sessionStorage.setItem('username', data.username);
           sessionStorage.setItem('tipo', data.tipo);
           
+          // Atualizar display (função em user-session.js)
           updateUserDisplay(data.username, data.tipo);
           
           if (loginModal) loginModal.style.display = 'none';
@@ -75,34 +70,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
-// Função para atualizar a exibição do usuário
-function updateUserDisplay(username, tipo) {
-  const openLoginBtn = document.getElementById('openLogin');
-  const userDisplay = document.getElementById('userDisplay');
-  
-  if (openLoginBtn && userDisplay) {
-    openLoginBtn.style.display = 'none';
-    userDisplay.style.display = 'inline';
-    userDisplay.textContent = `👤 ${username} (${tipo})`;
-    userDisplay.style.cursor = 'pointer';
-    
-    // Aplicar cor conforme tema
-    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-    userDisplay.style.color = isDarkMode ? '#fff' : '#333';
-    
-    // Adicionar opção de logout
-    userDisplay.addEventListener('click', () => {
-      const logout = confirm('Deseja fazer logout?');
-      if (logout) {
-        sessionStorage.removeItem('userId');
-        sessionStorage.removeItem('username');
-        sessionStorage.removeItem('tipo');
-        openLoginBtn.style.display = 'inline';
-        userDisplay.style.display = 'none';
-        alert('Você foi desconectado!');
-      }
-    });
-  }
-}
-

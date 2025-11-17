@@ -1,0 +1,519 @@
+:root {
+    --bg-dark: #f7fbff; /* agora um fundo claro */
+    --main-bg-container: #ffffff; /* container principal branco */
+    --room-card-bg: #f1f5f9; /* cartões levemente acinzentados */
+    --text-light: #1f2937; /* cor do texto mais escura, confortável */
+    --action-enter: #ff7a3a; /* laranja suave */
+    --action-create: #22c55e; /* verde mais suave */
+    --action-edit: #fbbf24; /* amarelo suave */
+    --action-delete: #ef4444; /* vermelho menos agressivo */
+    --toggle-icon-color: #6b7280; /* cor do ícone */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    background: linear-gradient(180deg, var(--bg-dark) 0%, #eef6fb 100%);
+    color: var(--text-light);
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding: 50px;
+    
+    position: relative; 
+    overflow: hidden; 
+    z-index: 1; 
+}
+
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%; 
+    filter: blur(90px); 
+    z-index: -1; 
+    pointer-events: none; 
+}
+
+body::before {
+    top: -120px;
+    left: -120px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(255,122,58,0.16) 0%, rgba(255,122,58,0.08) 40%, transparent 70%);
+    animation: moveOrb1 18s infinite alternate ease-in-out;
+}
+
+body::after {
+    bottom: -80px;
+    right: -80px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, rgba(255,163,77,0.12) 0%, rgba(255,163,77,0.06) 45%, transparent 75%);
+    animation: moveOrb2 22s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes moveOrb1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(50px, 80px) scale(1.05);
+    }
+    100% {
+        transform: translate(-30px, -50px) scale(1);
+    }
+}
+
+@keyframes moveOrb2 {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(-100px, 40px) rotate(10deg);
+    }
+    66% {
+        transform: translate(60px, -70px) rotate(-5deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+.voltar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    background: #f33708;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+ 
+
+.page-header {
+    margin-top: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+.page-header h1 {
+    font-size: 36px;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: inherit;
+    text-align: left;
+}
+
+
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+}
+
+.management-area {
+    display: flex; 
+    background-color: var(--main-bg-container);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    min-height: 500px;
+}
+
+/* Remover visualmente a sidebar lateral (oculta) */
+.sidebar-actions {
+    display: none !important;
+}
+
+/* Oculta também o container do botão CANCELAR se existir fora do fluxo */
+#cancel-action-btn-container {
+    display: none !important;
+}
+
+/* Ajuste: a área de gerenciamento ocupa todo o espaço disponível quando a sidebar está oculta */
+.room-content-container {
+    border-right: none; /* remove a borda que separava a sidebar */
+}
+
+.room-content-container {
+    flex-grow: 1; 
+    padding: 20px;
+    border-right: 1px solid #444; 
+    display: flex; 
+    flex-direction: column;
+}
+
+/* Cabeçalho da lista com botão à direita */
+.room-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.sidebar-btn.small {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+#room-list-scroller {
+    overflow-y: auto; 
+    max-height: 460px;
+}
+
+.room-card {
+    display: flex; 
+    align-items: center;
+    background-color: var(--room-card-bg);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    padding: 15px;
+    font-size: 18px;
+    cursor: default;
+    width: 100%; 
+}
+
+.room-card-name {
+    flex-grow: 1; 
+}
+
+/* Tooltip simples para descrição */
+.room-card-name {
+    position: relative;
+}
+.room-card-name::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    max-width: 320px;
+    font-size: 13px;
+    opacity: 0;
+    transform-origin: top left;
+    transform: translateY(-6px) scale(0.98);
+    transition: opacity 160ms ease, transform 160ms ease;
+    pointer-events: none;
+    z-index: 50;
+}
+.room-card-name:hover::after {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.room-card-capacity {
+    margin-right: 20px;
+    font-weight: bold;
+    flex-shrink: 0; 
+}
+
+.room-actions-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.room-actions-container .room-action-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.room-action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.action-enter-btn { background-color: var(--action-enter); color: white; }
+.action-edit-btn { background-color: var(--action-edit); color: #000; }
+.action-delete-btn { background-color: var(--action-delete); color: white; }
+
+body.dark-theme .action-enter-btn { color: white; }
+body.dark-theme .action-edit-btn { color: #000; }
+body.dark-theme .action-delete-btn { color: white; }
+
+/* Toggle de descrição */
+.room-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    padding: 4px;
+}
+.room-toggle-btn.rotated {
+    transform: rotate(180deg);
+}
+
+.room-desc-panel {
+    margin: 8px 0 18px 0;
+    padding: 12px 14px;
+    background-color: rgba(0,0,0,0.12);
+    border-radius: 8px;
+    color: #ddd;
+    font-size: 14px;
+    line-height: 1.5;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.28s ease, padding 0.28s ease, opacity 0.28s ease;
+    opacity: 0;
+}
+.room-desc-panel:not(.hidden) {
+    max-height: 50vh; /* permite crescer até metade da viewport */
+    padding: 12px 14px;
+    opacity: 1;
+    overflow: auto; /* scroll interno quando necessário */
+}
+
+
+.sidebar-actions {
+    width: 200px; 
+    display: flex;
+    flex-direction: column;
+    padding: 20px; 
+    gap: 15px;
+    flex-shrink: 0; 
+}
+
+.sidebar-btn {
+    padding: 15px 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.primary-action { background-color: var(--action-create); color: #000; }
+.secondary-action { background-color: var(--action-edit); color: #000; }
+.danger-action { background-color: var(--action-delete); color: white; }
+
+.full-width {
+    width: 100%;
+}
+
+
+
+.form-modal {
+    width: 100%;
+}
+
+.form-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #666;
+}
+
+.form-header h2 {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.form-cancel-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+#room-crud-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 40px; 
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    align-self: flex-start; 
+}
+
+/* ------------------------------------------------------------------ */
+/* NOVO CÓDIGO PARA O TOGGLE DE SENHA */
+/* ------------------------------------------------------------------ */
+
+.password-input-wrapper {
+    /* Torna o container do input e do botão um contexto de posicionamento */
+    position: relative;
+    width: 100%;
+}
+
+.input-group input {
+    /* Ajustado para preencher o wrapper */
+    width: 100%;
+    padding: 15px 10px;
+    /* Adiciona padding extra à direita para não esconder o ícone de toggle */
+    padding-right: 40px; 
+    background-color: var(--room-card-bg);
+    border: none;
+    border-radius: 0; 
+    color: var(--text-light);
+    font-size: 16px;
+    font-family: inherit;
+    /* Ajuste para input de senha dentro do wrapper */
+    &::placeholder {
+        color: #aaaaaa;
+    }
+}
+
+.toggle-password-btn {
+    /* Posiciona o botão de toggle absolutamente dentro do wrapper */
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px; /* Área de clique maior */
+    color: var(--toggle-icon-color); /* Usa a nova variável de cor para ícone */
+    font-size: 18px; 
+    line-height: 1;
+    z-index: 10;
+}
+
+.toggle-password-btn:hover {
+    color: var(--text-light);
+}
+
+/* ------------------------------------------------------------------ */
+/* FIM DO NOVO CÓDIGO */
+/* ------------------------------------------------------------------ */
+
+
+.form-actions {
+    grid-column: 1 / -1; 
+    display: flex;
+    justify-content: flex-start; 
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.form-actions button {
+    padding: 12px 30px; 
+    font-size: 16px;
+    border-radius: 0; 
+    font-weight: bold;
+}
+
+.confirm-btn { background-color: var(--action-create); }
+.cancel-btn { background-color: var(--action-delete); }
+
+
+body.dark-theme {
+    --bg-dark: #000000;
+    --main-bg-container: #333333;
+    --room-card-bg: #555555;
+    --text-light: #000000;
+    --action-enter: #ff4500;
+    --action-create: #00dd07;
+    --action-edit: #fff237;
+    --action-delete: #ff0000;
+    --toggle-icon-color: #aaaaaa;
+}
+
+body.dark-theme .room-card-name {
+    color: #ffffff;
+}
+
+body.dark-theme .room-card-capacity {
+    color: #ffffff;
+}
+
+body.dark-theme .room-toggle-btn {
+    color: #ffffff;
+}
+
+body.dark-theme .room-desc-panel {
+    color: #ddd;
+    background-color: rgba(255,255,255,0.12);
+}
+
+/* --- Tema claro (padr�o) --- */
+body.light-theme .room-card-name {
+    color: #1f2937;
+}
+
+body.light-theme .room-card-capacity {
+    color: #1f2937;
+}
+
+body.light-theme .room-toggle-btn {
+    color: #1f2937;
+}
+
+body.light-theme .room-desc-panel {
+    color: #4b5563;
+    background-color: rgba(0,0,0,0.08);
+}
+
+/* --- Botão de alternar tema --- */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(16,24,40,0.06);
+    background: rgba(255,255,255,0.6);
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 999;
+}
+
+body.dark-theme .theme-toggle {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.1);
+}
+
+body.light-theme .theme-toggle {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(16,24,40,0.06);
+}

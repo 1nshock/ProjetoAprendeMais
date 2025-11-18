@@ -17,63 +17,9 @@ body {
     min-height: 100vh;
     padding: 120px 0 60px;
     position: relative; 
-    overflow: hidden; 
+    overflow-y: auto; 
+    overflow-x: hidden; 
     z-index: 1; 
-}
-
-body::before,
-body::after {
-    content: '';
-    position: absolute;
-    border-radius: 50%; 
-    filter: blur(90px); 
-    z-index: -1; 
-    pointer-events: none; 
-}
-
-body::before {
-    top: -120px;
-    left: -120px;
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(255,122,58,0.16) 0%, rgba(255,122,58,0.08) 40%, transparent 70%);
-    animation: moveOrb1 18s infinite alternate ease-in-out;
-}
-
-body::after {
-    bottom: -80px;
-    right: -80px;
-    width: 360px;
-    height: 360px;
-    background: radial-gradient(circle, rgba(255,163,77,0.12) 0%, rgba(255,163,77,0.06) 45%, transparent 75%);
-    animation: moveOrb2 22s infinite alternate-reverse ease-in-out;
-}
-
-@keyframes moveOrb1 {
-    0% {
-        transform: translate(0, 0) scale(1);
-    }
-    50% {
-        transform: translate(50px, 80px) scale(1.05);
-    }
-    100% {
-        transform: translate(-30px, -50px) scale(1);
-    }
-}
-
-@keyframes moveOrb2 {
-    0% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    33% {
-        transform: translate(-100px, 40px) rotate(10deg);
-    }
-    66% {
-        transform: translate(60px, -70px) rotate(-5deg);
-    }
-    100% {
-        transform: translate(0, 0) rotate(0deg);
-    }
 }
 
 
@@ -113,6 +59,7 @@ body::after {
     position: relative;
     z-index: 10;
     padding: 0 40px;
+    overflow-x: auto;
 }
 
 .management-area {

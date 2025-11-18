@@ -147,13 +147,13 @@
     }
 
     .btn-back {
-        background:  orangered;
-        color: #ffffff;
+        background:  #f33708;
+        color: #FFFFFF;
         margin-bottom: 15px;
     }
 
     .btn-back:hover {
-        background: #d0d0d0;
+        background: #f33708;
     }
 
     .btn-submit {

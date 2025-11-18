@@ -15,23 +15,15 @@
     --toggle-icon-color: #6b7280; /* cor do ícone */
 }
 
-/* Garantir que login-button está alinhado corretamente */
-.login-button {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
 body {
     background: linear-gradient(180deg, var(--bg-dark) 0%, #eef6fb 100%);
     color: var(--text-light);
     font-family: Arial, sans-serif;
     min-height: 100vh;
-    padding: 50px;
-    
-    position: relative; 
-    overflow: hidden; 
-    z-index: 1; 
+    padding: 120px 0 60px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
 
 body::before,
@@ -127,6 +119,7 @@ body::after {
     margin: 0 auto;
     position: relative;
     z-index: 10;
+    padding: 0 40px;
 }
 
 .management-area {

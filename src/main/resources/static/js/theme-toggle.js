@@ -6,11 +6,11 @@
     const saved = localStorage.getItem('site-theme');
     if (saved === 'dark') {
       body.classList.add('dark-theme');
-    } else if (saved === 'light') {
+    } else {
       body.classList.add('light-theme');
     }
   } catch (e) {
-    // ignore
+    body.classList.add('light-theme');
   }
 
   function updateButton() {

@@ -1,13 +1,8 @@
 // =====================================================================
 // DADOS E ESTADO (MODEL)
 // =====================================================================
-let rooms = [
-    { id: 1, nome: "Sala 01", capacidadeAtual: 20, capacidadeMaxima: 40, descricao: "Matemática", senha: "123" },
-    { id: 2, nome: "Sala 02", capacidadeAtual: 22, capacidadeMaxima: 40, descricao: "História", senha: "456" },
-    { id: 3, nome: "Sala 03", capacidadeAtual: 4, capacidadeMaxima: 40, descricao: "Química", senha: "" },
-    { id: 4, nome: "Sala 04", capacidadeAtual: 19, capacidadeMaxima: 40, descricao: "Português", senha: "789" },
-];
-let nextRoomId = 5;
+let rooms = [];
+const SALAS_API_URL = '/api/salas';
 
 // Variável de Estado de UI
 let currentMode = 'view'; 
@@ -25,6 +20,138 @@ const cancelBtnContainer = document.getElementById('cancel-action-btn-container'
 const createModeBtn = document.getElementById('create-mode-btn');
 const editModeBtn = document.getElementById('edit-mode-btn');
 const cancelActionBtn = document.getElementById('cancel-action-btn');
+const deleteModeBtn = document.getElementById('delete-mode-btn');
+
+// =====================================================================
+// HELPER FUNCTIONS
+// =====================================================================
+function getCurrentUser() {
+    return {
+        id: sessionStorage.getItem('userId'),
+        username: sessionStorage.getItem('username'),
+        tipo: sessionStorage.getItem('tipo')
+    };
+}
+
+function isUserLoggedIn() {
+    return sessionStorage.getItem('userId') !== null;
+}
+
+// =====================================================================
+// COMUNICACAO COM BACKEND (API)
+// =====================================================================
+async function parseError(response) {
+    try {
+        const data = await response.json();
+        if (data && typeof data === 'object') {
+            const message = data.error || data.message;
+            if (message) {
+                return new Error(message);
+            }
+        }
+    } catch (_) {
+        // Ignora erro de parse
+    }
+    return new Error(response.statusText || 'Falha na requisicao.');
+}
+
+async function fetchRooms() {
+    try {
+        const response = await fetch(SALAS_API_URL, {
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw await parseError(response);
+        }
+
+        rooms = await response.json();
+        console.log('GET /api/salas retornou:', rooms);
+        renderRooms();
+    } catch (err) {
+        console.error('Erro ao carregar salas', err);
+        alert(err.message ? `Erro ao carregar salas: ${err.message}` : 'Nao foi possivel carregar as salas.');
+    }
+}
+
+async function createRoom(payload) {
+    const response = await fetch(SALAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    const data = await response.json();
+    console.log('POST /api/salas retornou:', data);
+    return data;
+}
+
+async function updateRoom(id, payload) {
+    const response = await fetch(`${SALAS_API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}
+
+async function removeRoom(id) {
+    const response = await fetch(`${SALAS_API_URL}/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+}
+
+async function entrarSala(id) {
+    const response = await fetch(`${SALAS_API_URL}/${id}/entrar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}
+
+async function sairSala(id) {
+    const response = await fetch(`${SALAS_API_URL}/${id}/sair`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}
+
+async function listarAlunosSala(id) {
+    const response = await fetch(`${SALAS_API_URL}/${id}/alunos`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+        throw await parseError(response);
+    }
+
+    return response.json();
+}
 
 // =====================================================================
 // LÓGICA DE GERENCIAMENTO DE ESTADO (CONTROLLER)
@@ -56,7 +183,11 @@ function setMode(newMode) {
 // RENDERIZAÇÃO DA LISTA DE SALAS (VIEW)
 // =====================================================================
 function renderRooms() {
+    console.log('renderRooms chamado com rooms:', rooms);
     roomListScroller.innerHTML = '';
+    
+    const currentUser = getCurrentUser();
+    const isLoggedIn = isUserLoggedIn();
     
     rooms.forEach(room => {
         const card = document.createElement('div');
@@ -73,32 +204,76 @@ function renderRooms() {
         const actionsContainer = document.createElement('div');
         actionsContainer.className = 'room-actions-container';
 
+        // Determinar se usuário atual é o professor desta sala
+        const isProfessor = isLoggedIn && currentUser.id && String(currentUser.id) === String(room.professorId);
+        
         // Botão Entrar
         const enterBtn = document.createElement('button');
         enterBtn.className = 'room-action-btn action-enter-btn';
         enterBtn.textContent = 'Entrar';
-        enterBtn.onclick = () => alert(`Entrando na sala: ${room.nome}`);
+        
+        // Desabilitar se: não logado OU é professor da sala
+        if (!isLoggedIn || isProfessor) {
+            enterBtn.disabled = true;
+            enterBtn.title = !isLoggedIn ? 'Faça login para entrar' : 'Você é o professor desta sala';
+        } else {
+            enterBtn.onclick = () => handleEnterRoom(room.id);
+        }
 
+        // Botão Sair
+        const exitBtn = document.createElement('button');
+        exitBtn.className = 'room-action-btn action-exit-btn';
+        exitBtn.textContent = 'Sair';
+        exitBtn.style.display = 'none'; // TODO: Rastrear se usuário está na sala
+        
         // Botão Editar
         const editBtn = document.createElement('button');
         editBtn.className = 'room-action-btn action-edit-btn';
         editBtn.textContent = 'Editar';
         editBtn.dataset.roomId = room.id;
-        editBtn.onclick = () => openFormModal('edit', room);
+        
+        // Desabilitar se não é professor
+        if (!isProfessor) {
+            editBtn.disabled = true;
+            editBtn.title = 'Apenas o professor pode editar';
+        } else {
+            editBtn.onclick = () => openFormModal('edit', room);
+        }
 
         // Botão Apagar (Ação Direta)
         const delBtn = document.createElement('button');
         delBtn.className = 'room-action-btn action-delete-btn';
         delBtn.textContent = 'Apagar';
         delBtn.dataset.roomId = room.id;
-        delBtn.onclick = (e) => {
-            e.stopPropagation();
-            deleteRoom(room.id);
-        };
+        
+        // Desabilitar se não é professor
+        if (!isProfessor) {
+            delBtn.disabled = true;
+            delBtn.title = 'Apenas o professor pode apagar';
+        } else {
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteRoom(room.id);
+            };
+        }
+
+        // Botão Ver Alunos (apenas professor)
+        const viewStudentsBtn = document.createElement('button');
+        viewStudentsBtn.className = 'room-action-btn action-view-students-btn';
+        viewStudentsBtn.textContent = 'Ver Alunos';
+        
+        if (!isProfessor) {
+            viewStudentsBtn.disabled = true;
+            viewStudentsBtn.title = 'Apenas o professor pode ver alunos';
+        } else {
+            viewStudentsBtn.onclick = () => handleViewStudents(room.id, room.nome);
+        }
 
         // Renderização Condicional Limpa
         if (currentMode === 'view') {
             actionsContainer.appendChild(enterBtn);
+            actionsContainer.appendChild(exitBtn);
+            actionsContainer.appendChild(viewStudentsBtn);
             actionsContainer.appendChild(editBtn);
             actionsContainer.appendChild(delBtn);
         } else if (currentMode === 'edit') {
@@ -112,6 +287,56 @@ function renderRooms() {
     });
 }
 
+// =====================================================================
+// LOGICA DE ENTRADA/SAIDA (ENTER/EXIT)
+// =====================================================================
+async function handleEnterRoom(roomId) {
+    try {
+        const sala = await entrarSala(roomId);
+        alert('Você entrou na sala com sucesso!');
+        console.log('Entrada na sala bem-sucedida:', sala);
+        await fetchRooms();
+    } catch (err) {
+        console.error('Erro ao entrar na sala', err);
+        alert(err.message || 'Nao foi possivel entrar na sala.');
+    }
+}
+
+async function handleExitRoom(roomId) {
+    try {
+        const sala = await sairSala(roomId);
+        alert('Você saiu da sala!');
+        console.log('Saida da sala bem-sucedida:', sala);
+        await fetchRooms();
+    } catch (err) {
+        console.error('Erro ao sair da sala', err);
+        alert(err.message || 'Nao foi possivel sair da sala.');
+    }
+}
+
+async function handleViewStudents(roomId, roomName) {
+    try {
+        const alunos = await listarAlunosSala(roomId);
+        
+        if (alunos.length === 0) {
+            alert('Nenhum aluno entrou nesta sala ainda.');
+            return;
+        }
+
+        // Criar lista formatada
+        let listaAlunos = `Alunos na sala "${roomName}":\n\n`;
+        alunos.forEach((aluno, index) => {
+            const entrada = new Date(aluno.dataEntrada).toLocaleString('pt-BR');
+            listaAlunos += `${index + 1}. ID: ${aluno.alunoId}\n   Entrada: ${entrada}\n`;
+        });
+        
+        alert(listaAlunos);
+        console.log('Alunos na sala:', alunos);
+    } catch (err) {
+        console.error('Erro ao buscar alunos', err);
+        alert(err.message || 'Nao foi possivel buscar os alunos.');
+    }
+}
 
 // =====================================================================
 // LOGICA CRUD (OPEN FORM, SUBMIT, DELETE)
@@ -199,7 +424,7 @@ function openFormModal(mode, room = null) {
 }
 
 // 2. ENVIAR FORMULÁRIO (CONFIRMAR)
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
     e.preventDefault();
 
     const id = document.getElementById('room-id').value;
@@ -216,28 +441,54 @@ function handleFormSubmit(e) {
         return; 
     }
 
-    if (id) {
-        // Modo Edição (Update)
-        const roomIndex = rooms.findIndex(r => r.id == id);
-        if (roomIndex !== -1) {
-            rooms[roomIndex] = { ...rooms[roomIndex], nome, descricao, capacidadeMaxima, senha };
+    const existingRoom = id ? rooms.find(r => String(r.id) === String(id)) : null;
+    const capacidadeAtualPayload = existingRoom && typeof existingRoom.capacidadeAtual === 'number'
+        ? existingRoom.capacidadeAtual
+        : 0;
+
+    const payload = {
+        nome: nome.trim(),
+        descricao,
+        capacidadeMaxima,
+        capacidadeAtual: capacidadeAtualPayload,
+        senha: senha || null
+        // professorId não precisa ser enviado - backend pega da sessão
+    };
+
+    try {
+        if (id) {
+            await updateRoom(id, payload);
+            alert('Sala editada com sucesso!');
+        } else {
+            if (payload.capacidadeAtual == null) {
+                payload.capacidadeAtual = 0;
+            }
+            await createRoom(payload);
+            alert('Sala criada com sucesso!');
         }
-    } else {
-        // Modo Criação (Create)
-        const newRoom = { id: nextRoomId++, nome, descricao, capacidadeAtual: 0, capacidadeMaxima, senha };
-        rooms.push(newRoom);
+
+        console.log('Antes de fetchRooms, rooms está:', rooms);
+        await fetchRooms();
+        console.log('Depois de fetchRooms, rooms está:', rooms);
+        setMode('view');
+    } catch (err) {
+        console.error('Erro ao salvar sala', err);
+        alert(err.message || 'Nao foi possivel salvar a sala.');
     }
-    
-    alert(`Sala ${id ? 'editada' : 'criada'} com sucesso (Simulação)!`);
-    setMode('view');
 }
 
 // 3. APAGAR SALA
-function deleteRoom(id) {
+async function deleteRoom(id) {
     if (confirm("Tem certeza que deseja apagar esta sala?")) {
-        rooms = rooms.filter(room => room.id !== id);
-        alert("Sala apagada com sucesso (Simulação)!");
-        setMode('view');
+        try {
+            await removeRoom(id);
+            alert('Sala apagada com sucesso!');
+            await fetchRooms();
+            setMode('view');
+        } catch (err) {
+            console.error('Erro ao remover sala', err);
+            alert(err.message || 'Nao foi possivel apagar a sala.');
+        }
     }
 }
 
@@ -249,6 +500,9 @@ function deleteRoom(id) {
 createModeBtn.addEventListener('click', () => openFormModal('create')); 
 editModeBtn.addEventListener('click', () => setMode('edit')); 
 cancelActionBtn.addEventListener('click', () => setMode('view')); 
+if (deleteModeBtn) {
+    deleteModeBtn.addEventListener('click', () => setMode('edit'));
+}
 
 const createTopBtn = document.getElementById('create-top-btn');
 if (createTopBtn) createTopBtn.addEventListener('click', () => openFormModal('create'));
@@ -256,4 +510,5 @@ if (createTopBtn) createTopBtn.addEventListener('click', () => openFormModal('cr
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     setMode('view');
+    fetchRooms();
 });

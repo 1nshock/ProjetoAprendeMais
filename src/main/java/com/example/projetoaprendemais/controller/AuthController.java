@@ -12,6 +12,7 @@ import com.example.projetoaprendemais.dto.InstituicaoRequest;
 import com.example.projetoaprendemais.repository.ProfessorRepository;
 import com.example.projetoaprendemais.repository.AlunoRepository;
 import com.example.projetoaprendemais.repository.InstituicaoRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,11 +37,17 @@ public class AuthController {
     public static record RegisterResponse(boolean ok, String message, Long userId) {}
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req, HttpSession session) {
         User u = authService.authenticate(req.username(), req.password());
         if (u == null) {
             return ResponseEntity.status(401).body(new LoginResponse(false, null, null, null));
         }
+        
+        // Guardar dados na sessão HTTP do servidor
+        session.setAttribute("usuarioId", u.getId());
+        session.setAttribute("username", u.getUsername());
+        session.setAttribute("tipoUsuario", u.getTipo());
+        
         return ResponseEntity.ok(new LoginResponse(true, u.getId(), u.getUsername(), u.getTipo()));
     }
 

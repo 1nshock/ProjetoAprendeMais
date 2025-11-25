@@ -399,8 +399,8 @@ function openFormModal(mode, room = null) {
     if (toggleBtn && pwdInput) {
        
         const eyeSvg = {
-            open: '👁️', 
-            closed: '🔒' 
+            open: '()', 
+            closed: '()' 
         };
 
         // Estado inicial

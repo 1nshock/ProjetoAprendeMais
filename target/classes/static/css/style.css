@@ -100,6 +100,12 @@ a {
   background: #ff3c00;
 }
 
+.login-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .login-button a {
   background: linear-gradient(to right, #ff3c00, #ff6b00);
   color: #fff;

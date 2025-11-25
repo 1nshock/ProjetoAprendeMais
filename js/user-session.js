@@ -7,18 +7,30 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUserDisplay(username, tipo);
   }
   
-  // Observer para mudanças de tema
+  // Observer para mudanças de cor conforme tema (não para resetar display)
   const observer = new MutationObserver(() => {
     if (username) {
-      updateUserDisplay(username, tipo);
+      // Apenas atualizar a cor, não resetar a exibição
+      updateUserDisplayColor(tipo);
     }
   });
 
   observer.observe(document.body, {
     attributes: true,
-    attributeFilter: ['data-theme', 'class']
+    attributeFilter: ['class']
   });
 });
+
+// Função para atualizar apenas a cor do usuário conforme tema
+function updateUserDisplayColor(tipo) {
+  const userDisplay = document.getElementById('userDisplay');
+  if (!userDisplay) return;
+  
+  const isDarkMode = document.body.classList.contains('dark-theme') ||
+             document.documentElement.getAttribute('data-theme') === 'dark' || 
+             window.matchMedia('(prefers-color-scheme: dark)').matches;
+  userDisplay.style.color = isDarkMode ? '#fff' : '#333';
+}
 
 // Função para atualizar a exibição do usuário
 function updateUserDisplay(username, tipo) {
@@ -28,7 +40,7 @@ function updateUserDisplay(username, tipo) {
   if (openLoginBtn && userDisplay) {
     openLoginBtn.style.display = 'none';
     userDisplay.style.display = 'inline';
-    userDisplay.textContent = `👤 ${username} (${tipo})`;
+    userDisplay.textContent = `${username} (${tipo})`;
     userDisplay.style.cursor = 'pointer';
     
     // Aplicar cor conforme tema - verificar computedStyle

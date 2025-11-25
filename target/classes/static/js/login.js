@@ -51,13 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
 
         if (data.ok) {
-          alert(`Bem-vindo, ${data.username}! (${data.tipo})`);
+          const displayName = data.nomeInstituicao || data.nome;
+          alert(`Bem-vindo, ${displayName}! (${data.tipo})`);
           sessionStorage.setItem('userId', data.userId);
-          sessionStorage.setItem('username', data.username);
+          sessionStorage.setItem('username', displayName); // Armazenar o nome
           sessionStorage.setItem('tipo', data.tipo);
           
           // Atualizar display (função em user-session.js)
-          updateUserDisplay(data.username, data.tipo);
+          updateUserDisplay(displayName, data.tipo);
           
           if (loginModal) loginModal.style.display = 'none';
           loginForm.reset();

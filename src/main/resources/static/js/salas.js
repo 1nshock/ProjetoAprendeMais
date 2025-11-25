@@ -172,8 +172,8 @@ function setMode(newMode) {
     // O botão CANCELAR lateral deve aparecer SOMENTE no modo 'edit'
     cancelBtnContainer.classList.toggle('hidden', newMode !== 'edit');
 
-    // 3. Renderiza a lista (se não for formulário)
-    if (!isFormMode) {
+    // 3. Renderiza a lista (se não for formulário e se houver dados)
+    if (!isFormMode && rooms.length > 0) {
         renderRooms();
     }
 }
@@ -398,24 +398,19 @@ function openFormModal(mode, room = null) {
 
     if (toggleBtn && pwdInput) {
        
-        const eyeSvg = {
-            open: '👁️', 
-            closed: '🔒' 
-        };
-
-        // Estado inicial
-        toggleBtn.innerHTML = eyeSvg.open;
+        // Estado inicial - mostrar apenas texto
+        toggleBtn.innerHTML = 'Mostrar';
         toggleBtn.setAttribute('aria-pressed', 'false');
 
         toggleBtn.addEventListener('click', () => {
             if (pwdInput.type === 'password') {
                 pwdInput.type = 'text';
-                toggleBtn.innerHTML = eyeSvg.closed;
+                toggleBtn.innerHTML = 'Ocultar';
                 toggleBtn.setAttribute('aria-label', 'Ocultar senha');
                 toggleBtn.setAttribute('aria-pressed', 'true');
             } else {
                 pwdInput.type = 'password';
-                toggleBtn.innerHTML = eyeSvg.open;
+                toggleBtn.innerHTML = 'Mostrar';
                 toggleBtn.setAttribute('aria-label', 'Mostrar senha');
                 toggleBtn.setAttribute('aria-pressed', 'false');
             }

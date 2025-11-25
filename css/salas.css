@@ -296,10 +296,11 @@ body.dark-theme .action-delete-btn { color: white; }
 
 .input-group label {
     font-size: 14px;
-    color: #ccc;
+    color: #000000;
     margin-bottom: 5px;
     text-transform: uppercase;
-    align-self: flex-start; 
+    align-self: flex-start;
+    font-weight: bold;
 }
 
 /* ------------------------------------------------------------------ */
@@ -328,7 +329,25 @@ body.dark-theme .action-delete-btn { color: white; }
 
 /* Ajuste para input de senha dentro do wrapper */
 .input-group input::placeholder {
-    color: #858584;
+    color: #888888;
+}
+
+/* Dark theme - texto branco */
+body.dark-theme .input-group input {
+    color: #fdfafa;
+}
+
+body.dark-theme .input-group input::placeholder {
+    color: #aaaaaa;
+}
+
+/* Light theme - texto preto */
+body.light-theme .input-group input {
+    color: #1f2937;
+}
+
+body.light-theme .input-group input::placeholder {
+    color: #888888;
 }
 .toggle-password-btn {
     /* Posiciona o botão de toggle absolutamente dentro do wrapper */
@@ -388,6 +407,10 @@ body.dark-theme {
 }
 
 body.dark-theme .room-card-name {
+    color: #ffffff;
+}
+
+body.dark-theme .input-group label {
     color: #ffffff;
 }
 

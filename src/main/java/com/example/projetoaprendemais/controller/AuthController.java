@@ -33,14 +33,14 @@ public class AuthController {
     }
 
     public static record LoginRequest(String username, String password) {}
-    public static record LoginResponse(boolean ok, Long userId, String username, String tipo) {}
+    public static record LoginResponse(boolean ok, Long userId, String username, String nome, String nomeInstituicao, String tipo) {}
     public static record RegisterResponse(boolean ok, String message, Long userId) {}
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req, HttpSession session) {
         User u = authService.authenticate(req.username(), req.password());
         if (u == null) {
-            return ResponseEntity.status(401).body(new LoginResponse(false, null, null, null));
+            return ResponseEntity.status(401).body(new LoginResponse(false, null, null, null, null, null));
         }
         
         // Guardar dados na sessão HTTP do servidor
@@ -48,7 +48,35 @@ public class AuthController {
         session.setAttribute("username", u.getUsername());
         session.setAttribute("tipoUsuario", u.getTipo());
         
-        return ResponseEntity.ok(new LoginResponse(true, u.getId(), u.getUsername(), u.getTipo()));
+        // Buscar o nome real dependendo do tipo de usuário
+        String nome = u.getUsername(); // fallback padrão
+        String nomeInstituicao = null;
+        
+        try {
+            if ("professor".equalsIgnoreCase(u.getTipo())) {
+                Professor prof = professorRepository.findByUserId(u.getId());
+                if (prof != null && prof.getNome() != null && !prof.getNome().trim().isEmpty()) {
+                    nome = prof.getNome();
+                }
+            } else if ("aluno".equalsIgnoreCase(u.getTipo())) {
+                Aluno aluno = alunoRepository.findByUserId(u.getId());
+                if (aluno != null && aluno.getNome() != null && !aluno.getNome().trim().isEmpty()) {
+                    nome = aluno.getNome();
+                }
+            } else if ("instituicao".equalsIgnoreCase(u.getTipo())) {
+                Instituicao inst = instituicaoRepository.findByUserId(u.getId());
+                if (inst != null && inst.getNomeUnidade() != null && !inst.getNomeUnidade().trim().isEmpty()) {
+                    nomeInstituicao = inst.getNomeUnidade();
+                    nome = inst.getNomeUnidade();
+                }
+            }
+        } catch (Exception e) {
+            // Se houver erro ao buscar, usa o username como fallback
+            System.err.println("Erro ao buscar nome do usuário: " + e.getMessage());
+        }
+        
+        System.out.println("Login bem-sucedido: " + u.getUsername() + " - Nome: " + nome + " - Tipo: " + u.getTipo());
+        return ResponseEntity.ok(new LoginResponse(true, u.getId(), u.getUsername(), nome, nomeInstituicao, u.getTipo()));
     }
 
     @PostMapping("/register")

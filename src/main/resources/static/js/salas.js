@@ -398,8 +398,13 @@ function openFormModal(mode, room = null) {
 
     if (toggleBtn && pwdInput) {
        
-        // Estado inicial - mostrar apenas texto
-        toggleBtn.innerHTML = 'Mostrar';
+        const eyeSvg = {
+            open: '👁️', 
+            closed: '🔒' 
+        };
+
+        // Estado inicial
+        toggleBtn.innerHTML = eyeSvg.open;
         toggleBtn.setAttribute('aria-pressed', 'false');
 
         toggleBtn.addEventListener('click', () => {

@@ -82,7 +82,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        color: white;
+        color: rgb(250, 250, 250);
         text-align: center;
     }
 
@@ -147,13 +147,13 @@
     }
 
     .btn-back {
-        background: #e0e0e0;
-        color: #333;
+        background:  #f33708;
+        color: #FFFFFF;
         margin-bottom: 15px;
     }
 
     .btn-back:hover {
-        background: #d0d0d0;
+        background: #f33708;
     }
 
     .btn-submit {

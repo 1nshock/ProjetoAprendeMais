@@ -436,7 +436,7 @@
             <div style="margin-top:10px;color:#6b7280;font-size:13px">Suas respostas foram salvas e aparecerão no painel de progresso.</div>
           </div>
         </div>
-        <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end">
+        <div class="result-actions">
           <button id="rerunTest" class="sidebar-btn">Refazer</button>
           <button id="viewCorrections" class="sidebar-btn">Ver Correções</button>
           <button id="viewProgress" class="sidebar-btn primary-action">Ver Progresso</button>
@@ -655,7 +655,7 @@
             <div style="margin-top:10px;color:#6b7280;font-size:13px">Refazer está desabilitado pelo professor. Veja abaixo seu resultado salvo.</div>
           </div>
         </div>
-        <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end">
+        <div class="result-actions">
           <button id="viewCorrectionsPrev" class="sidebar-btn">Ver Correções</button>
           <button id="viewProgressPrev" class="sidebar-btn primary-action">Ver Progresso</button>
           <button id="closeResultPrev" class="sidebar-btn">Fechar</button>

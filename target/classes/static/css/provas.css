@@ -277,7 +277,28 @@ body.dark-theme .sidebar-btn.primary-action { background: linear-gradient(90deg,
   font-weight: 700;
 }
 .test-result .result-summary { color: #6b7280; font-size: 13px }
-.test-result .result-actions { margin-top: 14px; display:flex; gap:10px; justify-content:flex-end }
+.test-result .result-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.test-result .result-actions .sidebar-btn {
+  flex: 1 1 150px;
+  min-width: 140px;
+  max-width: 200px;
+  text-align: center;
+}
+@media (max-width: 520px) {
+  .test-result .result-actions {
+    gap: 10px;
+  }
+  .test-result .result-actions .sidebar-btn {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+}
 body.dark-theme .test-result .result-summary { color: #cbd5e1 }
 
 /* harmonizar botões do painel de resultado */

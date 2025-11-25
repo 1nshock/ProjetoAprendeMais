@@ -398,7 +398,6 @@ function openFormModal(mode, room = null) {
 
     if (toggleBtn && pwdInput) {
        
-        // Estado inicial - mostrar apenas texto
         toggleBtn.innerHTML = 'Mostrar';
         toggleBtn.setAttribute('aria-pressed', 'false');
 

@@ -398,13 +398,7 @@ function openFormModal(mode, room = null) {
 
     if (toggleBtn && pwdInput) {
        
-        const eyeSvg = {
-            open: '👁️', 
-            closed: '🔒' 
-        };
-
-        // Estado inicial
-        toggleBtn.innerHTML = eyeSvg.open;
+        toggleBtn.innerHTML = 'Mostrar';
         toggleBtn.setAttribute('aria-pressed', 'false');
 
         toggleBtn.addEventListener('click', () => {

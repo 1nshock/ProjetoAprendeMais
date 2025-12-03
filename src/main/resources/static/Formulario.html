@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormulárioTesteParaIA</title>
+    <link rel="css" href="/css/form.css">
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-btn" id="btnResponder" onclick="mostrarSecao('responder')">
+                Responder
+            </button>
+            <button class="nav-btn" id="btnRespostas" onclick="mostrarSecao('respostas')">
+                Respostas (<span id="contadorRespostas">0</span>)
+            </button>
+            <button class="nav-btn" id="btnAnalise" onclick="mostrarSecao('analise')">
+                Análise/Relatório
+            </button>
+            <button class="nav-btn active" id="btnCriar" onclick="mostrarSecao('criar')">
+                Criar/Editar
+            </button>
+        </div>
+
+        <div id="secaoCriar" class="card">
+            <div class="header-actions">
+                <h1>Criar Formulário</h1>
+                <button class="btn btn-danger btn-secondary" onclick="resetarTudo()">Resetar Tudo</button>
+            </div>
+
+            <div class="form-group">
+                <label>Título do Formulário <span class="required">*</span></label>
+                <input type="text" id="tituloForm" placeholder="Ex: Pesquisa de Satisfação">
+            </div>
+
+            <div class="form-group">
+                <label>Descrição (opcional)</label>
+                <textarea id="descricaoForm" placeholder="Breve descrição do formulário" rows="2"></textarea>
+            </div>
+
+            <h2>Perguntas Adicionadas</h2>
+            <div id="listaPerguntasAdicionadas"></div>
+
+            <div class="nova-pergunta-box">
+                <h3>Nova Pergunta</h3>
+                
+                <div class="form-group">
+                    <input type="text" id="novaPerguntaTexto" placeholder="Digite a pergunta">
+                </div>
+
+                <div class="form-group">
+                    <select id="novaPerguntaTipo" onchange="atualizarTipoPergunta()">
+                        <option value="texto">Resposta em texto</option>
+                        <option value="numero">Resposta numérica</option>
+                        <option value="multipla">Múltipla escolha</option>
+                    </select>
+                </div>
+
+                <div id="opcoesContainer" class="hidden">
+                    <label>Opções:</label>
+                    <div id="listaOpcoes"></div>
+                    <button class="add-opcao-btn" onclick="adicionarOpcao()">Adicionar Opção</button>
+                </div>
+
+                <button class="btn" onclick="adicionarPergunta()">Adicionar Pergunta</button>
+            </div>
+
+            <button class="btn" onclick="salvarFormulario()" style="background: #3e5bdf;">Publicar Formulário</button>
+        </div>
+
+        <div id="secaoResponder" class="card hidden">
+            <div id="formularioResposta"></div>
+        </div>
+
+        <div id="secaoRespostas" class="card hidden">
+            <div class="header-actions">
+                <h2>Respostas Recebidas</h2>
+                <!-- <button class="btn btn-secondary export-btn" onclick="exportarCSV()">Exportar CSV</button> -->
+            </div>
+            <div id="listaRespostas"></div>
+        </div>
+
+        <div id="secaoAnalise" class="card hidden">
+            <div class="header-actions">
+                <h2>Análise/Relatório</h2>
+            </div>
+            <div id="conteudoAnalise">
+                <div class="resposta-item">
+                    <p style="color: #666; text-align: center;">Análise será exibida aqui</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/Form.js"></script>
+</body>
+</html>

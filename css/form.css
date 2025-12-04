@@ -35,12 +35,14 @@ body {
     min-height: 100vh;
     padding: 100px 20px 60px;
     overflow-y: auto;
+    font-size: 90%;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 100px 40px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-buttons {
@@ -208,7 +210,10 @@ input[type="datetime-local"] {
     position: relative;
     font-size: 16px;
     line-height: 1.5;
-    background: linear-gradient(to right, var(--main-bg-container) 0%, var(--main-bg-container) calc(100% - 40px), #f0f0f0 calc(100% - 40px), #f0f0f0 100%);
+}
+
+[data-theme="dark"] input[type="datetime-local"] {
+    background: var(--main-bg-container);
 }
 
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
@@ -256,7 +261,14 @@ textarea:focus,
 select:focus {
     outline: none;
     border-color: var(--action-enter);
-    box-shadow: 0 0 8px rgba(255, 122, 58, 0.2);
+    box-shadow: 0 0 16px rgba(255, 122, 58, 0.4), inset 0 0 10px rgba(255, 122, 58, 0.15);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+    border-color: var(--action-enter);
+    box-shadow: 0 0 16px rgba(255, 122, 58, 0.4), inset 0 0 10px rgba(255, 122, 58, 0.15);
 }
 
 textarea {
@@ -331,6 +343,7 @@ textarea {
     align-items: flex-start;
     border: 2px solid #bfdbfe;
     transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] .pergunta-item {
@@ -428,6 +441,7 @@ textarea {
     border-left: 4px solid var(--action-enter);
     border: 1px solid #e5e7eb;
     border-left: 4px solid var(--action-enter);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .resposta-header {
@@ -487,6 +501,7 @@ textarea {
     border-radius: 8px;
     margin-bottom: 20px;
     border: 2px solid #bfdbfe;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] .nova-pergunta-box {
@@ -606,4 +621,72 @@ footer p {
     border-color: var(--action-enter);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo melhorado para datetime input */
+.datetime-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--main-bg-container);
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.datetime-input-wrapper:hover {
+    border-color: var(--action-enter);
+    box-shadow: 0 0 8px rgba(255, 122, 58, 0.15);
+}
+
+.datetime-input-wrapper:focus-within {
+    border-color: var(--action-enter);
+    box-shadow: 0 0 16px rgba(255, 122, 58, 0.4), inset 0 0 10px rgba(255, 122, 58, 0.15);
+}
+
+[data-theme="dark"] .datetime-input-wrapper {
+    background: var(--main-bg-container);
+    border-color: #475569;
+}
+
+[data-theme="dark"] .datetime-input-wrapper:hover {
+    border-color: var(--action-enter);
+    box-shadow: 0 0 8px rgba(255, 122, 58, 0.15);
+}
+
+[data-theme="dark"] .datetime-input-wrapper:focus-within {
+    border-color: var(--action-enter);
+    box-shadow: 0 0 16px rgba(255, 122, 58, 0.4), inset 0 0 10px rgba(255, 122, 58, 0.15);
+}
+
+.datetime-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 8px 4px;
+    font-size: 16px;
+    color: var(--text-light);
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.datetime-input::placeholder {
+    color: #9ca3af;
+}
+
+.datetime-input:focus {
+    outline: none;
+}
+
+[data-theme="dark"] .datetime-input {
+    color: var(--text-light);
+}
+
+[data-theme="dark"] .datetime-input::placeholder {
+    color: #64748b;
 }

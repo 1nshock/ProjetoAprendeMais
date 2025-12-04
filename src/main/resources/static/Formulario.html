@@ -64,8 +64,11 @@
 
             <div class="form-group">
                 <label>Prazo para responder (opcional)</label>
-                <input type="datetime-local" id="prazoDatalimit" title="Clique para escolher a data e hora limite para respostas">
-                <small style="color:#666;margin-top:5px;display:block;">Deixe em branco para sem prazo. Alunos não poderão responder após este prazo.</small>
+                <div class="datetime-input-wrapper">
+                    <span class="calendar-icon">📅</span>
+                    <input type="datetime-local" id="prazoDatalimit" class="datetime-input" title="Clique para escolher a data e hora limite para respostas" placeholder="Clique aqui para escolher data e hora">
+                </div>
+                <small style="color:#ff3300;margin-top:5px;display:block;">Deixe em branco para sem prazo. Alunos não poderão responder após este prazo.</small>
             </div>
 
             <div class="form-group" style="display:flex;align-items:center;gap:12px;margin:20px 0;">
@@ -121,11 +124,24 @@
             </div>
             <div id="conteudoAnalise">
                 <div class="resposta-item">
-                    <p style="color: #666; text-align: center;">Análise será exibida aqui</p>
+                    <p style="color: #ff3300; text-align: center;">Análise será exibida aqui</p>
                 </div>
             </div>
         </div>
     </div>
     <script src="./js/Form.js"></script>
+    <script>
+        // Fazer o emoji do calendário abrir o date picker
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarIcon = document.querySelector('.calendar-icon');
+            const dateInput = document.getElementById('prazoDatalimit');
+            
+            if (calendarIcon && dateInput) {
+                calendarIcon.addEventListener('click', function() {
+                    dateInput.showPicker?.() || dateInput.click();
+                });
+            }
+        });
+    </script>
 </body>
 </html>

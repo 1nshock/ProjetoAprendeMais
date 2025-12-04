@@ -14,6 +14,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 90%;
 }
 
 /* orbs suaves para manter identidade visual, agora com menor contraste */

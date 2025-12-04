@@ -329,7 +329,6 @@ body.dark-theme .action-delete-btn { color: white; }
 
 /* Ajuste para input de senha dentro do wrapper */
 .input-group input::placeholder {
-<<<<<<< HEAD
     color: #888888;
 }
 
@@ -349,9 +348,6 @@ body.light-theme .input-group input {
 
 body.light-theme .input-group input::placeholder {
     color: #888888;
-=======
-    color: #858584;
->>>>>>> 2ea2bc3786826dd9783092312a4d5c882a6edd05
 }
 .toggle-password-btn {
     /* Posiciona o botão de toggle absolutamente dentro do wrapper */

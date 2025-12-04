@@ -122,7 +122,6 @@
                 formularios = [];
             }
             
-            renderizarListaFormularios();
             atualizarContadoresRespostas();
         }
 

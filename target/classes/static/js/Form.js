@@ -169,8 +169,7 @@
                         <div id="listaFormulariosExistentes"></div>
                     </div>
                 `;
-                const card = container.querySelector('.card');
-                card.insertAdjacentHTML('afterend', html);
+                container.insertAdjacentHTML('beforeend', html);
                 listaDiv = document.getElementById('listaFormulariosExistentes');
             }
 
@@ -391,9 +390,14 @@
             }
 
             const formId = editingId || 'form-' + Date.now();
+            let dataCriacao = new Date().toISOString();
             
-            // Se está editando, remover versão antiga
+            // Se está editando, remover versão antiga e guardar data original
             if (editingId) {
+                const formOriginal = formularios.find(f => f.id === editingId);
+                if (formOriginal) {
+                    dataCriacao = formOriginal.dataCriacao;
+                }
                 formularios = formularios.filter(f => f.id !== editingId);
             }
 
@@ -402,7 +406,7 @@
                 titulo: titulo,
                 descricao: descricao,
                 perguntas: perguntas,
-                dataCriacao: editingId ? formularios.find(f => f.id === editingId)?.dataCriacao : new Date().toISOString()
+                dataCriacao: dataCriacao
             };
 
             formularios.unshift(formulario);

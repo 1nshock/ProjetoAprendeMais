@@ -1,31 +1,129 @@
-        let formulario = null;
+        let formularios = []; // Lista de todos os formulários
+        let formularioAtual = null; // Formulário selecionado para responder
         let perguntas = [];
         let respostas = [];
         let opcoesPerguntaAtual = [];
 
         window.onload = function() {
             carregarDados();
+            initTheme();
         };
 
-        function carregarDados() {
-            const formSalvo = localStorage.getItem('formulario-config');
-            if (formSalvo) {
-                formulario = JSON.parse(formSalvo);
-                perguntas = formulario.perguntas;
-                document.getElementById('tituloForm').value = formulario.titulo;
-                document.getElementById('descricaoForm').value = formulario.descricao || '';
-                renderizarPerguntasAdicionadas();
-                renderizarFormularioResposta();
-                mostrarSecao('responder');
-            }
+        // Funções para tema light/dark
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton();
+        }
 
-            const respostasSalvas = localStorage.getItem('respostas-formulario');
-            if (respostasSalvas) {
-                respostas = JSON.parse(respostasSalvas);
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton();
+        }
+
+        function updateThemeButton() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.textContent = theme === 'light' ? '🌙' : '☀️';
+            }
+        }
+
+        // Funções para controlar permissão de múltiplas respostas
+        function getAllowMultipleResponses(formId) {
+            try {
+                const raw = localStorage.getItem(`formulario-allow-multiple-${formId}`);
+                if (raw === null) return true;
+                return raw === 'true';
+            } catch (e) {
+                return true;
+            }
+        }
+
+        function setAllowMultipleResponses(formId, allow) {
+            try {
+                localStorage.setItem(`formulario-allow-multiple-${formId}`, allow ? 'true' : 'false');
+            } catch (e) {}
+        }
+
+        function getUserHasResponded(formId) {
+            try {
+                const raw = localStorage.getItem(`formulario-user-responded-${formId}`);
+                return raw === 'true';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function setUserResponded(formId) {
+            try {
+                localStorage.setItem(`formulario-user-responded-${formId}`, 'true');
+            } catch (e) {}
+        }
+
+        function clearUserResponded(formId) {
+            try {
+                localStorage.removeItem(`formulario-user-responded-${formId}`);
+            } catch (e) {}
+        }
+
+        function getPrazo(formId) {
+            try {
+                return localStorage.getItem(`formulario-prazo-${formId}`);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setPrazo(formId, prazo) {
+            try {
+                if (prazo) {
+                    localStorage.setItem(`formulario-prazo-${formId}`, prazo);
+                } else {
+                    localStorage.removeItem(`formulario-prazo-${formId}`);
+                }
+            } catch (e) {}
+        }
+
+        function getAllowAfterDeadline(formId) {
+            try {
+                const raw = localStorage.getItem(`formulario-allow-after-deadline-${formId}`);
+                return raw === 'true';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function setAllowAfterDeadline(formId, allow) {
+            try {
+                localStorage.setItem(`formulario-allow-after-deadline-${formId}`, allow ? 'true' : 'false');
+            } catch (e) {}
+        }
+
+        function isPrazoVencido(formId) {
+            const prazo = getPrazo(formId);
+            if (!prazo) return false;
+            
+            const agora = new Date();
+            const dataVencimento = new Date(prazo);
+            return agora > dataVencimento && !getAllowAfterDeadline(formId);
+        }
+
+        function carregarDados() {
+            try {
+                const formsSalvos = localStorage.getItem('formularios-list');
+                if (formsSalvos) {
+                    formularios = JSON.parse(formsSalvos);
+                }
+            } catch (e) {
+                formularios = [];
             }
             
-            atualizarContadorRespostas();
-            renderizarRespostas();
+            renderizarListaFormularios();
+            atualizarContadoresRespostas();
         }
 
         function mostrarSecao(secao) {
@@ -42,19 +140,124 @@
             if (secao === 'criar') {
                 document.getElementById('secaoCriar').classList.remove('hidden');
                 document.getElementById('btnCriar').classList.add('active');
+                renderizarListaFormularios();
             } else if (secao === 'responder') {
                 document.getElementById('secaoResponder').classList.remove('hidden');
                 document.getElementById('btnResponder').classList.add('active');
-                renderizarFormularioResposta();
+                renderizarSeletorFormularios();
             } else if (secao === 'respostas') {
                 document.getElementById('secaoRespostas').classList.remove('hidden');
                 document.getElementById('btnRespostas').classList.add('active');
-                renderizarRespostas();
+                renderizarTodasRespostas();
             } else if (secao === 'analise') {
                 document.getElementById('secaoAnalise').classList.remove('hidden');
                 document.getElementById('btnAnalise').classList.add('active');
                 renderizarAnalise();
             }
+        }
+
+        function renderizarListaFormularios() {
+            const container = document.getElementById('secaoCriar');
+            
+            // Se já existe a lista, só atualiza o conteúdo
+            let listaDiv = document.getElementById('listaFormulariosExistentes');
+            if (!listaDiv) {
+                // Criar estrutura inicial
+                const html = `
+                    <div style="margin-top:30px;border-top:1px solid #ddd;padding-top:20px;">
+                        <h2>Formulários Existentes</h2>
+                        <div id="listaFormulariosExistentes"></div>
+                    </div>
+                `;
+                const card = container.querySelector('.card');
+                card.insertAdjacentHTML('afterend', html);
+                listaDiv = document.getElementById('listaFormulariosExistentes');
+            }
+
+            if (formularios.length === 0) {
+                listaDiv.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">Nenhum formulário criado ainda</p>';
+                return;
+            }
+
+            listaDiv.innerHTML = formularios.map(f => `
+                <div class="pergunta-item" style="margin-bottom:15px;">
+                    <div class="pergunta-content">
+                        <div class="pergunta-numero">${f.titulo}</div>
+                        <div class="pergunta-tipo">${f.perguntas.length} questões • ${new Date(f.dataCriacao).toLocaleString('pt-BR')}</div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="delete-btn" onclick="editarFormulario('${f.id}')" style="background:#667eea;color:white">Editar</button>
+                        <button class="delete-btn" onclick="removerFormulario('${f.id}')">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderizarSeletorFormularios() {
+            const container = document.getElementById('formularioResposta');
+            
+            if (formularios.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>Nenhum formulário disponível.</p>
+                        <p>O professor precisa criar um formulário primeiro!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <h1>Selecione um Formulário para Responder</h1>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:20px;">
+            `;
+
+            formularios.forEach(f => {
+                html += `
+                    <div class="card" style="cursor:pointer;transition:all 0.3s;" onclick="selecionarFormulario('${f.id}')">
+                        <h3>${f.titulo}</h3>
+                        <p style="color:#666;margin:10px 0;">${f.descricao || 'Sem descrição'}</p>
+                        <p style="font-size:12px;color:#999;">${f.perguntas.length} questões</p>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function selecionarFormulario(formId) {
+            formularioAtual = formularios.find(f => f.id === formId);
+            renderizarFormularioResposta();
+        }
+
+        function editarFormulario(formId) {
+            const form = formularios.find(f => f.id === formId);
+            if (!form) return;
+
+            document.getElementById('tituloForm').value = form.titulo;
+            document.getElementById('descricaoForm').value = form.descricao || '';
+            document.getElementById('allowMultipleResponses').checked = getAllowMultipleResponses(formId);
+            
+            perguntas = JSON.parse(JSON.stringify(form.perguntas)); // Deep copy
+            renderizarPerguntasAdicionadas();
+            
+            // Armazenar ID do formulário para edição
+            document.getElementById('tituloForm').dataset.editingId = formId;
+        }
+
+        function removerFormulario(formId) {
+            if (!confirm('Deseja excluir este formulário e todas as suas respostas?')) return;
+            
+            formularios = formularios.filter(f => f.id !== formId);
+            localStorage.setItem('formularios-list', JSON.stringify(formularios));
+            
+            // Limpar todas as respostas deste formulário
+            localStorage.removeItem(`respostas-${formId}`);
+            localStorage.removeItem(`formulario-allow-multiple-${formId}`);
+            localStorage.removeItem(`formulario-user-responded-${formId}`);
+            
+            renderizarListaFormularios();
+            atualizarContadoresRespostas();
         }
 
         function atualizarTipoPergunta() {
@@ -158,6 +361,8 @@
         function salvarFormulario() {
             const titulo = document.getElementById('tituloForm').value.trim();
             const descricao = document.getElementById('descricaoForm').value.trim();
+            const allowMultiple = document.getElementById('allowMultipleResponses').checked;
+            const editingId = document.getElementById('tituloForm').dataset.editingId;
 
             if (!titulo) {
                 alert('Digite um título para o formulário!');
@@ -169,16 +374,43 @@
                 return;
             }
 
-            formulario = {
-                titulo: titulo,
-                descricao: descricao,
-                perguntas: perguntas,
-                dataCriacao: new Date().toLocaleString('pt-BR')
-            };
+            let formId;
+            if (editingId) {
+                // Editar formulário existente
+                formId = editingId;
+                const index = formularios.findIndex(f => f.id === formId);
+                if (index !== -1) {
+                    formularios[index].titulo = titulo;
+                    formularios[index].descricao = descricao;
+                    formularios[index].perguntas = perguntas;
+                }
+            } else {
+                // Criar novo formulário
+                formId = `form-${Date.now()}`;
+                formularios.push({
+                    id: formId,
+                    titulo: titulo,
+                    descricao: descricao,
+                    perguntas: perguntas,
+                    dataCriacao: new Date().toLocaleString('pt-BR')
+                });
+            }
 
-            localStorage.setItem('formulario-config', JSON.stringify(formulario));
-            alert('Formulário publicado com sucesso! Agora qualquer pessoa pode responder.');
-            mostrarSecao('responder');
+            localStorage.setItem('formularios-list', JSON.stringify(formularios));
+            localStorage.setItem(`formulario-allow-multiple-${formId}`, allowMultiple ? 'true' : 'false');
+
+            // Limpar formulário
+            document.getElementById('tituloForm').value = '';
+            document.getElementById('descricaoForm').value = '';
+            document.getElementById('allowMultipleResponses').checked = true;
+            document.getElementById('tituloForm').dataset.editingId = '';
+            perguntas = [];
+            opcoesPerguntaAtual = [];
+
+            alert(editingId ? 'Formulário atualizado!' : 'Formulário publicado com sucesso! Agora qualquer pessoa pode responder.');
+            renderizarListaFormularios();
+            renderizarPerguntasAdicionadas();
+            atualizarContadoresRespostas();
         }
 
         function renderizarFormularioResposta() {
@@ -189,6 +421,18 @@
                     <div class="empty-state">
                         <p>Nenhum formulário criado ainda.</p>
                         <p>Clique em "Criar/Editar" para começar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Verificar se o usuário já respondeu e múltiplas respostas não são permitidas
+            if (!getAllowMultipleResponses() && getUserHasResponded()) {
+                container.innerHTML = `
+                    <div class="resposta-item" style="padding:20px;text-align:center;border-left:4px solid #ff6b6b">
+                        <h2 style="color:#ff6b6b;margin-bottom:10px">Resposta já enviada</h2>
+                        <p>O professor não permite múltiplas respostas para este formulário.</p>
+                        <p style="margin-top:10px;color:#666;font-size:14px">Sua resposta foi registrada em: <strong>${new Date().toLocaleString('pt-BR')}</strong></p>
                     </div>
                 `;
                 return;
@@ -211,10 +455,18 @@
                 } else if (p.tipo === 'numero') {
                     html += `<input type="number" id="resp_${p.id}" placeholder="Digite um número">`;
                 } else if (p.tipo === 'multipla') {
-                    html += `<select id="resp_${p.id}">
-                        <option value="">Selecione uma opção</option>
-                        ${p.opcoes.map(op => `<option value="${op}">${op}</option>`).join('')}
-                    </select>`;
+                    // Usar radio buttons para aceitar apenas uma resposta
+                    html += `<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">`;
+                    p.opcoes.forEach(op => {
+                        const idRadio = `resp_${p.id}_${op.replace(/\s+/g, '_')}`;
+                        html += `
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <input type="radio" id="${idRadio}" name="resp_${p.id}" value="${op}">
+                                <label for="${idRadio}" style="margin:0;cursor:pointer;">${op}</label>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
                 }
 
                 html += `</div>`;
@@ -230,7 +482,15 @@
             let todasPreenchidas = true;
 
             perguntas.forEach(p => {
-                const valor = document.getElementById(`resp_${p.id}`).value.trim();
+                let valor = '';
+                if (p.tipo === 'multipla') {
+                    // Pegar valor do radio button selecionado
+                    const radioSelecionado = document.querySelector(`input[name="resp_${p.id}"]:checked`);
+                    valor = radioSelecionado ? radioSelecionado.value : '';
+                } else {
+                    valor = document.getElementById(`resp_${p.id}`).value.trim();
+                }
+                
                 if (!valor) {
                     todasPreenchidas = false;
                 }
@@ -250,17 +510,30 @@
 
             respostas.push(novaResposta);
             localStorage.setItem('respostas-formulario', JSON.stringify(respostas));
+            
+            // Marcar que o usuário respondeu (se múltiplas respostas não forem permitidas)
+            if (!getAllowMultipleResponses()) {
+                setUserResponded();
+            }
 
             document.getElementById('mensagemEnviado').classList.remove('hidden');
             
             perguntas.forEach(p => {
-                document.getElementById(`resp_${p.id}`).value = '';
+                if (p.tipo === 'multipla') {
+                    const radioSelecionado = document.querySelector(`input[name="resp_${p.id}"]:checked`);
+                    if (radioSelecionado) radioSelecionado.checked = false;
+                } else {
+                    document.getElementById(`resp_${p.id}`).value = '';
+                }
             });
 
             atualizarContadorRespostas();
 
             setTimeout(() => {
                 document.getElementById('mensagemEnviado').classList.add('hidden');
+                if (!getAllowMultipleResponses()) {
+                    renderizarFormularioResposta(); // Atualizar para mostrar mensagem de já respondido
+                }
             }, 3000);
         }
 
@@ -353,6 +626,8 @@
             if (confirm('Isso vai apagar TUDO (formulário e respostas). Tem certeza?')) {
                 localStorage.removeItem('formulario-config');
                 localStorage.removeItem('respostas-formulario');
+                localStorage.removeItem('formulario-allow-multiple-responses');
+                localStorage.removeItem('formulario-user-responded');
                 formulario = null;
                 perguntas = [];
                 respostas = [];

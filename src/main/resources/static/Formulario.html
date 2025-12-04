@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FormulárioTesteParaIA</title>
-    <link rel="css" href="/css/form.css">
+    <title>Formulário - Aprende+</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/form.css">
 </head>
 <body>
+  <header class="topbar">
+    <div class="logo"><img src="css/img/aprende+.png" alt="Aprende+" style="height:48px"></div>
+    <nav class="navbar">
+      <a href="index.html" class="nav-link">Início</a>
+      <a href="menudeensino.html" class="nav-link">Menu de ensino</a>
+    </nav>
+    <div class="login-button">
+      <button class="btn-voltar" onclick="history.back()" title="Voltar" style="margin-right:12px;">
+        ← Voltar
+      </button>
+      <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">🌗</button>
+    </div>
+  </header>
+
     <div class="container">
         <div class="nav-buttons">
             <button class="nav-btn" id="btnResponder" onclick="mostrarSecao('responder')">
@@ -37,6 +52,24 @@
             <div class="form-group">
                 <label>Descrição (opcional)</label>
                 <textarea id="descricaoForm" placeholder="Breve descrição do formulário" rows="2"></textarea>
+            </div>
+
+            <div class="form-group" style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+                <input type="checkbox" id="allowMultipleResponses" checked>
+                <label for="allowMultipleResponses" style="margin:0;cursor:pointer;">Permitir múltiplas respostas por usuário</label>
+            </div>
+
+            <div class="form-group">
+                <label>Prazo para Responder (opcional)</label>
+                <input type="datetime-local" id="prazoDatalimit" placeholder="Data e hora limite">
+                <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
+                    Professor: defina quando os alunos não poderão mais responder
+                </small>
+            </div>
+
+            <div class="form-group" style="display:flex;align-items:center;gap:12px;margin:20px 0;">
+                <input type="checkbox" id="allowAfterDeadline">
+                <label for="allowAfterDeadline" style="margin:0;cursor:pointer;">Permitir respostas após o prazo</label>
             </div>
 
             <h2>Perguntas Adicionadas</h2>

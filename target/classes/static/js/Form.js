@@ -158,6 +158,7 @@
 
         function renderizarListaFormularios() {
             const container = document.getElementById('secaoCriar');
+            if (!container) return; // Proteção se elemento não existir
             
             // Se já existe a lista, só atualiza o conteúdo
             let listaDiv = document.getElementById('listaFormulariosExistentes');
@@ -434,9 +435,9 @@
 
         function renderizarFormularioResposta() {
             const container = document.getElementById('formularioResposta');
-
-            if (!formularioAtual) {
-                renderizarSeletorFormularios();
+            
+            if (!container || !formularioAtual) {
+                if (container) renderizarSeletorFormularios();
                 return;
             }
 

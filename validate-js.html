@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validar Form.js</title>
+</head>
+<body>
+    <h1>Validação de Form.js</h1>
+    <p id="status">Carregando...</p>
+    <script>
+        console.log("Iniciando validação...");
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error("Erro de sintaxe:", msg, "em", url, "linha", lineNo);
+            document.getElementById('status').textContent = "ERRO: " + msg + " (linha " + lineNo + ")";
+            return false;
+        };
+    </script>
+    <script src="./js/Form.js"></script>
+    <script>
+        console.log("Form.js carregado com sucesso!");
+        if (typeof atualizarContadoresRespostas !== 'undefined') {
+            console.log("✓ atualizarContadoresRespostas está definida");
+            document.getElementById('status').textContent = "✓ Tudo OK!";
+        } else {
+            console.error("✗ atualizarContadoresRespostas NÃO está definida");
+            document.getElementById('status').textContent = "✗ atualizarContadoresRespostas não definida";
+        }
+    </script>
+</body>
+</html>

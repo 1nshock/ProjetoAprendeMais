@@ -1,3 +1,4 @@
+        console.log("Form.js carregado com sucesso");
         let formularios = []; // Lista de todos os formulários
         let formularioAtual = null; // Formulário selecionado para responder
         let perguntas = [];
@@ -113,6 +114,7 @@
         }
 
         function carregarDados() {
+            console.log("carregarDados() chamado");
             try {
                 const formsSalvos = localStorage.getItem('formularios-list');
                 if (formsSalvos) {
@@ -122,6 +124,7 @@
                 formularios = [];
             }
             
+            console.log("Chamando atualizarContadoresRespostas()");
             atualizarContadoresRespostas();
         }
 

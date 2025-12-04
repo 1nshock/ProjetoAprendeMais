@@ -8,21 +8,24 @@
     <link rel="stylesheet" href="css/form.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo"><img src="css/img/aprende+.png" alt="Aprende+" style="height:48px"></div>
-    <nav class="navbar">
-      <a href="index.html" class="nav-link">Início</a>
-      <a href="menudeensino.html" class="nav-link">Menu de ensino</a>
-    </nav>
-    <div class="login-button">
-      <button class="btn-voltar" onclick="history.back()" title="Voltar" style="margin-right:12px;">
-        ← Voltar
-      </button>
-      <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">🌗</button>
-    </div>
-  </header>
+
+    <header class="topbar">
+        <div class="logo">
+        </div>
+        <nav class="navbar">
+            <a href="index.html" class="nav-link">Início</a>
+            <a href="menudeensino.html" class="nav-link">Menu de ensino</a>
+        </nav>
+        <div class="login-button">
+            <button class="btn-voltar" onclick="history.back()" title="Voltar" style="margin-right:12px;">
+                ← Voltar
+            </button>
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">🌗</button>
+        </div>
+    </header>
 
     <div class="container">
+
         <div class="nav-buttons">
             <button class="nav-btn" id="btnResponder" onclick="mostrarSecao('responder')">
                 Responder
@@ -60,11 +63,9 @@
             </div>
 
             <div class="form-group">
-                <label>Prazo para Responder (opcional)</label>
-                <input type="datetime-local" id="prazoDatalimit" placeholder="Data e hora limite">
-                <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
-                    Professor: defina quando os alunos não poderão mais responder
-                </small>
+                <label>Prazo para responder (opcional)</label>
+                <input type="datetime-local" id="prazoDatalimit" title="Clique para escolher a data e hora limite para respostas">
+                <small style="color:#666;margin-top:5px;display:block;">Deixe em branco para sem prazo. Alunos não poderão responder após este prazo.</small>
             </div>
 
             <div class="form-group" style="display:flex;align-items:center;gap:12px;margin:20px 0;">
@@ -99,7 +100,7 @@
                 <button class="btn" onclick="adicionarPergunta()">Adicionar Pergunta</button>
             </div>
 
-            <button class="btn" onclick="salvarFormulario()" style="background: #3e5bdf;">Publicar Formulário</button>
+            <button class="btn" onclick="salvarFormulario()" style="background: #3e5bdf; color: white;">Publicar Formulário</button>
         </div>
 
         <div id="secaoResponder" class="card hidden">
@@ -125,6 +126,6 @@
             </div>
         </div>
     </div>
-    <script src="/js/Form.js"></script>
+    <script src="./js/Form.js"></script>
 </body>
 </html>

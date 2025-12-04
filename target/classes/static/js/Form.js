@@ -127,10 +127,17 @@
         }
 
         function mostrarSecao(secao) {
-            document.getElementById('secaoCriar').classList.add('hidden');
-            document.getElementById('secaoResponder').classList.add('hidden');
-            document.getElementById('secaoRespostas').classList.add('hidden');
-            document.getElementById('secaoAnalise').classList.add('hidden');
+            const secaoCriar = document.getElementById('secaoCriar');
+            const secaoResponder = document.getElementById('secaoResponder');
+            const secaoRespostas = document.getElementById('secaoRespostas');
+            const secaoAnalise = document.getElementById('secaoAnalise');
+            
+            if (!secaoCriar || !secaoResponder || !secaoRespostas || !secaoAnalise) return;
+            
+            secaoCriar.classList.add('hidden');
+            secaoResponder.classList.add('hidden');
+            secaoRespostas.classList.add('hidden');
+            secaoAnalise.classList.add('hidden');
 
             document.getElementById('btnCriar').classList.remove('active');
             document.getElementById('btnResponder').classList.remove('active');
@@ -138,19 +145,19 @@
             document.getElementById('btnAnalise').classList.remove('active');
 
             if (secao === 'criar') {
-                document.getElementById('secaoCriar').classList.remove('hidden');
+                secaoCriar.classList.remove('hidden');
                 document.getElementById('btnCriar').classList.add('active');
                 renderizarListaFormularios();
             } else if (secao === 'responder') {
-                document.getElementById('secaoResponder').classList.remove('hidden');
+                secaoResponder.classList.remove('hidden');
                 document.getElementById('btnResponder').classList.add('active');
                 renderizarSeletorFormularios();
             } else if (secao === 'respostas') {
-                document.getElementById('secaoRespostas').classList.remove('hidden');
+                secaoRespostas.classList.remove('hidden');
                 document.getElementById('btnRespostas').classList.add('active');
                 renderizarTodasRespostas();
             } else if (secao === 'analise') {
-                document.getElementById('secaoAnalise').classList.remove('hidden');
+                secaoAnalise.classList.remove('hidden');
                 document.getElementById('btnAnalise').classList.add('active');
                 renderizarAnalise();
             }
@@ -158,7 +165,10 @@
 
         function renderizarListaFormularios() {
             const container = document.getElementById('secaoCriar');
-            if (!container) return; // Proteção se elemento não existir
+            if (!container) {
+                console.warn('Container secaoCriar não encontrado');
+                return;
+            }
             
             // Se já existe a lista, só atualiza o conteúdo
             let listaDiv = document.getElementById('listaFormulariosExistentes');
@@ -170,8 +180,13 @@
                         <div id="listaFormulariosExistentes"></div>
                     </div>
                 `;
-                container.insertAdjacentHTML('beforeend', html);
-                listaDiv = document.getElementById('listaFormulariosExistentes');
+                try {
+                    container.insertAdjacentHTML('beforeend', html);
+                    listaDiv = document.getElementById('listaFormulariosExistentes');
+                } catch (e) {
+                    console.error('Erro ao inserir HTML:', e);
+                    return;
+                }
             }
 
             if (formularios.length === 0) {
